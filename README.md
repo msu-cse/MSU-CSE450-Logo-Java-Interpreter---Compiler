@@ -29,7 +29,7 @@ Please see the [wiki](msu-cse450-ss11/wiki).
         -   [How to install software for Eclipse][eclipse-updatemgr]
         -   Update Site: <http://antlrv3ide.sourceforge.net/updates>
 -   ANTLRv3
-    -   [Download][antlr-download]
+    -   [Download][antlr-download] ANTLR v3 and ANTLRWorks IDE
     -   [Getting Started][antlr-started]
 
 [antlr-download]: http://www.antlr.org/download.html "Download ANTLR"
