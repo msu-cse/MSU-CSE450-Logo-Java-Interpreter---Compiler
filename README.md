@@ -13,6 +13,7 @@ Please see the [wiki](msu-cse450-ss11/wiki).
 # Prerequisites
 
 -   Java JDK
+    -   Mac users don't have to do anything.
     -   [Windows Instructions][java-win] for downloading, installing, and setting environment variables.
     -   [Linux Instructions][java-linux] for setting the environment variables *only*.
         -   Linux installation is often some variant of 
@@ -22,7 +23,6 @@ Please see the [wiki](msu-cse450-ss11/wiki).
             or
 
                   yum install ...
-   -   Mac users don't have to do anything.
 -   Eclipse for Java Developers
     -   [Download][eclipse]
     -   Install the ANTLRv3 IDE plugin for Eclipse.
