@@ -8,6 +8,6 @@ Project Members
 
 # Project Definitions
 
-Please see the [msu-cse450-ss11/wiki](wiki).
+Please see the [wiki](msu-cse450-ss11/wiki).
 
  
