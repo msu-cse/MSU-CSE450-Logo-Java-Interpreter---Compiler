@@ -11,7 +11,14 @@ Project Members
 Please see the [wiki](msu-cse450-ss11/wiki).
 
 # Prerequisites
-
+-   Install Git
+    - Linux: `apt-get install git` or `yum install git` or similar
+    - OS X:  `brew install git` (requires [Homebrew](https://github.com/mxcl/homebrew/blob/master/README.md))
+    - Windows: [msysgit](http://code.google.com/p/msysgit/)
+-   Fork the repository
+    - Create a GitHub account
+    - Fork the project
+    - Follow the on-screen instructions to clone your fork
 -   Java JDK
     -   Mac users don't have to do anything.
     -   [Windows Instructions][java-win] for downloading, installing, and setting environment variables.
