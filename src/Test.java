@@ -7,6 +7,9 @@
  * Visit http://www.pragmaticprogrammer.com/titles/tpantlr for more book information.
 ***/
 import org.antlr.runtime.*;
+import org.python.antlr.LogoTokensLexer;
+
+import edu.msu.cse.cse450.LogoTokensParser;
 
 public class Test {
     public static void main(String[] args) throws Exception {
@@ -23,6 +26,8 @@ public class Test {
         LogoTokensParser parser = new LogoTokensParser(tokens);
         
         // begin parsing at rule r
-        parser.program();
+        parser.lexerRule();
+        
+        System.out.println("Hello, world!");
     }
 }
