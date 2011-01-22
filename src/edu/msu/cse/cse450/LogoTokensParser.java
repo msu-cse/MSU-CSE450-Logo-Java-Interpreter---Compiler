@@ -1,5 +1,5 @@
-package edu.msu.cse.cse450;
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 LogoTokens.g 2011-01-22 14:08:24
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 LogoTokens.g 2011-01-22 15:29:32
+ package edu.msu.cse.cse450; 
 
 import org.antlr.runtime.*;
 import java.util.Stack;
@@ -41,50 +41,64 @@ public class LogoTokensParser extends Parser {
 
 
     // $ANTLR start "lexerRule"
-    // LogoTokens.g:35:1: lexerRule : ( COMMAND )? ID ( COMMENT )? NEWLINE ;
+    // LogoTokens.g:44:1: lexerRule : ( COMMAND | ID | MATHOP | REFOP | NUMBER | COMMENT )* ( NEWLINE )? EOF ;
     public final void lexerRule() throws RecognitionException {
         try {
-            // LogoTokens.g:36:2: ( ( COMMAND )? ID ( COMMENT )? NEWLINE )
-            // LogoTokens.g:36:4: ( COMMAND )? ID ( COMMENT )? NEWLINE
+            // LogoTokens.g:45:2: ( ( COMMAND | ID | MATHOP | REFOP | NUMBER | COMMENT )* ( NEWLINE )? EOF )
+            // LogoTokens.g:45:4: ( COMMAND | ID | MATHOP | REFOP | NUMBER | COMMENT )* ( NEWLINE )? EOF
             {
-            // LogoTokens.g:36:4: ( COMMAND )?
-            int alt1=2;
-            int LA1_0 = input.LA(1);
+            // LogoTokens.g:45:4: ( COMMAND | ID | MATHOP | REFOP | NUMBER | COMMENT )*
+            loop1:
+            do {
+                int alt1=2;
+                int LA1_0 = input.LA(1);
 
-            if ( (LA1_0==COMMAND) ) {
-                alt1=1;
-            }
-            switch (alt1) {
-                case 1 :
-                    // LogoTokens.g:36:4: COMMAND
-                    {
-                    match(input,COMMAND,FOLLOW_COMMAND_in_lexerRule246); 
+                if ( ((LA1_0>=COMMAND && LA1_0<=NUMBER)||LA1_0==COMMENT) ) {
+                    alt1=1;
+                }
 
-                    }
-                    break;
 
-            }
+                switch (alt1) {
+            	case 1 :
+            	    // LogoTokens.g:
+            	    {
+            	    if ( (input.LA(1)>=COMMAND && input.LA(1)<=NUMBER)||input.LA(1)==COMMENT ) {
+            	        input.consume();
+            	        state.errorRecovery=false;
+            	    }
+            	    else {
+            	        MismatchedSetException mse = new MismatchedSetException(null,input);
+            	        throw mse;
+            	    }
 
-            match(input,ID,FOLLOW_ID_in_lexerRule249); 
-            // LogoTokens.g:36:16: ( COMMENT )?
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop1;
+                }
+            } while (true);
+
+            // LogoTokens.g:45:46: ( NEWLINE )?
             int alt2=2;
             int LA2_0 = input.LA(1);
 
-            if ( (LA2_0==COMMENT) ) {
+            if ( (LA2_0==NEWLINE) ) {
                 alt2=1;
             }
             switch (alt2) {
                 case 1 :
-                    // LogoTokens.g:36:16: COMMENT
+                    // LogoTokens.g:45:46: NEWLINE
                     {
-                    match(input,COMMENT,FOLLOW_COMMENT_in_lexerRule251); 
+                    match(input,NEWLINE,FOLLOW_NEWLINE_in_lexerRule282); 
 
                     }
                     break;
 
             }
 
-            match(input,NEWLINE,FOLLOW_NEWLINE_in_lexerRule254); 
+            match(input,EOF,FOLLOW_EOF_in_lexerRule285); 
 
             }
 
@@ -104,9 +118,8 @@ public class LogoTokensParser extends Parser {
 
  
 
-    public static final BitSet FOLLOW_COMMAND_in_lexerRule246 = new BitSet(new long[]{0x0000000000000080L});
-    public static final BitSet FOLLOW_ID_in_lexerRule249 = new BitSet(new long[]{0x0000000000001800L});
-    public static final BitSet FOLLOW_COMMENT_in_lexerRule251 = new BitSet(new long[]{0x0000000000000800L});
-    public static final BitSet FOLLOW_NEWLINE_in_lexerRule254 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_set_in_lexerRule267 = new BitSet(new long[]{0x0000000000001FC0L});
+    public static final BitSet FOLLOW_NEWLINE_in_lexerRule282 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_lexerRule285 = new BitSet(new long[]{0x0000000000000002L});
 
 }

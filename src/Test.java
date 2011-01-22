@@ -17,7 +17,7 @@ public class Test {
         ANTLRInputStream input = new ANTLRInputStream(System.in);
 
         // create a lexer that feeds off of input CharStream
-        Lexer lexer = new LogoTokensLexer(input);
+        LogoTokensLexer lexer = new LogoTokensLexer(input);
 
         // create a buffer of tokens pulled from the lexer
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -28,6 +28,6 @@ public class Test {
         // begin parsing at rule r
         parser.lexerRule();
         
-        System.out.println("Hello, world!");
+        System.out.println("There were " + lexer.mathopCount + " math ops");
     }
 }
