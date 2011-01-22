@@ -39,8 +39,8 @@ WS    : ( ' '
         | '\t'
         | '\r'
         | '\n'
-        ) {$channel=HIDDEN;}
+        )+ {$channel=HIDDEN;}
       ;
 
 expression: (COMMAND|ID|MATHOP|REFOP|NUMBER|COMMENT);
-program : (expression* NEWLINE)+ EOF;
+program : (expression)* NEWLINE? EOF;
