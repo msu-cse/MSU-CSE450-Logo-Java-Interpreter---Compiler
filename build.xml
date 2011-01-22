@@ -3,13 +3,13 @@
     <!--this file was created by Eclipse Runnable JAR Export Wizard-->
     <!--ANT 1.7 is required                                        -->
     <target name="create_run_jar">
-        <jar destfile="/Users/zach/Documents/workspace/CSE450-SS10/grammar.jar" filesetmanifest="mergewithoutmain">
+        <jar destfile="grammar.jar" filesetmanifest="mergewithoutmain">
             <manifest>
                 <attribute name="Main-Class" value="Test"/>
                 <attribute name="Class-Path" value="."/>
             </manifest>
-            <fileset dir="/Users/zach/Documents/workspace/CSE450-SS10/bin"/>
-            <zipfileset excludes="META-INF/*.SF" src="/Users/zach/Documents/workspace/CSE450-SS10/lib/antlr-3.3-complete.jar"/>
+            <fileset dir="bin"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/antlr-3.3-complete.jar"/>
         </jar>
     </target>
 </project>
