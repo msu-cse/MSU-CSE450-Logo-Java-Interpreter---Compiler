@@ -10,29 +10,32 @@ grammar LogoTokens;
   public Integer idCount = 0;
   public Integer refopCount = 0;
   public Integer numberCount = 0;
+  public Integer newlineCount = 0;
+  public Integer commentCount = 0;
+
 }
 ALPHA 	: ('a'..'z'|'A'..'Z');
 DIGIT	: ('0'..'9');
 
 
-COMMAND : ('print'|'make');
+COMMAND : ('print'|'make') { commandCount++; };
 
 ID  	: (ALPHA|'_') (ALPHA|DIGIT|'_')*
-    	;
+    	 { idCount++; };
 
 MATHOP  : ('+'|'-'|'*'|'/'|'%'|'('|')') { mathopCount++; };
 
-REFOP	: (':'|'"');
+REFOP	: (':'|'"') { refopCount++; };
 
 NUMBER 
 	: (DIGIT)+
-    	;
+    	 { numberCount++; };
 
-NEWLINE : '\r'? '\n';
+NEWLINE : '\r'? '\n' { newlineCount++; };
 
 COMMENT
     :   ';' ~('\n'|'\r')* {$channel=HIDDEN;}
-    ;
+     { commentCount++; };
 
 WS  :   ( ' '
         | '\t'
@@ -42,4 +45,4 @@ WS  :   ( ' '
     ;
 
 lexerRule 
-	: (COMMAND|ID|MATHOP|REFOP|NUMBER|COMMENT)* NEWLINE? EOF;
+	: (COMMAND|ID|MATHOP|REFOP|NUMBER|COMMENT)* NEWLINE? EOF?;

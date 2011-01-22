@@ -28,6 +28,13 @@ public class Test {
         // begin parsing at rule r
         parser.lexerRule();
         
+        System.out.println("There were " + lexer.commandCount + " commands");
+        System.out.println("There were " + lexer.numberCount + " numbers");
+        System.out.println("There were " + lexer.idCount + " IDs");
         System.out.println("There were " + lexer.mathopCount + " math ops");
+        System.out.println("There were " + lexer.refopCount + " ref ops");
+        System.out.println("There were " + lexer.newlineCount + " new lines");
+        System.out.println("There were " + lexer.commentCount + " comments");
+        
     }
 }
