@@ -5,7 +5,7 @@ ALPHA 	: ('a'..'z'|'A'..'Z');
 DIGIT	: ('0'..'9');
 
 
-COMMAND : ('print'|'say');
+COMMAND : ('print'|'make');
 
 ID  	: (ALPHA|'_') (ALPHA|DIGIT|'_')*
     	;
