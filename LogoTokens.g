@@ -1,4 +1,4 @@
-/* Authors: Zach Riggle, Brandon Overall, Kole Reece */
+/* Authors: Zach Riggle, Brandon Overall(overallb@msu.edu), Kole Reece */
 grammar LogoTokens;
 /* Character Patterns */
 
