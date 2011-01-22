@@ -1,3 +1,4 @@
+/* Authors: Zach Riggle, Brandon Overall, Kole Reece */
 grammar LogoTokens;
 /* Character Patterns */
 
