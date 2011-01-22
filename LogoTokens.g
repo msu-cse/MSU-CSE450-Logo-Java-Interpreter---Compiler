@@ -14,35 +14,33 @@ grammar LogoTokens;
   public Integer commentCount = 0;
 
 }
-ALPHA 	: ('a'..'z'|'A'..'Z');
-DIGIT	: ('0'..'9');
+ALPHA : ('a'..'z'|'A'..'Z');
+DIGIT : '0'..'9';
 
+COMMAND 
+      : ('print'|'make') { commandCount++; };
 
-COMMAND : ('print'|'make') { commandCount++; };
+ID    : (ALPHA|'_') (ALPHA|DIGIT|'_')* { idCount++; };
 
-ID  	: (ALPHA|'_') (ALPHA|DIGIT|'_')*
-    	 { idCount++; };
+MATHOP: ('+'|'-'|'*'|'/'|'%'|'('|')') { mathopCount++; };
 
-MATHOP  : ('+'|'-'|'*'|'/'|'%'|'('|')') { mathopCount++; };
-
-REFOP	: (':'|'"') { refopCount++; };
+REFOP : (':'|'"') { refopCount++; };
 
 NUMBER 
-	: (DIGIT)+
-    	 { numberCount++; };
+      : (DIGIT)+ { numberCount++; };
 
-NEWLINE : '\r'? '\n' { newlineCount++; };
+NEWLINE 
+      : '\r'? '\n' { newlineCount++; };
 
 COMMENT
-    :   ';' ~('\n'|'\r')* {$channel=HIDDEN;}
-     { commentCount++; };
+      : ';' ~('\n'|'\r')* {$channel=HIDDEN; commentCount++; };
 
-WS  :   ( ' '
+WS    : ( ' '
         | '\t'
         | '\r'
         | '\n'
         ) {$channel=HIDDEN;}
-    ;
+      ;
 
-lexerRule 
-	: (COMMAND|ID|MATHOP|REFOP|NUMBER|COMMENT)* NEWLINE? EOF?;
+expression: (COMMAND|ID|MATHOP|REFOP|NUMBER|COMMENT);
+program : (expression* NEWLINE)+ EOF;

@@ -26,15 +26,15 @@ public class Test {
         LogoTokensParser parser = new LogoTokensParser(tokens);
         
         // begin parsing at rule r
-        parser.lexerRule();
+        parser.program();
         
-        System.out.println("There were " + lexer.commandCount + " commands");
-        System.out.println("There were " + lexer.numberCount + " numbers");
-        System.out.println("There were " + lexer.idCount + " IDs");
-        System.out.println("There were " + lexer.mathopCount + " math ops");
-        System.out.println("There were " + lexer.refopCount + " ref ops");
-        System.out.println("There were " + lexer.newlineCount + " new lines");
-        System.out.println("There were " + lexer.commentCount + " comments");
+        System.out.println("COMMANDS:       " + lexer.commandCount);
+        System.out.println("IDS:            " + lexer.idCount);
+        System.out.println("NUMBERS:        " + lexer.numberCount);
+        System.out.println("MATHOPS:        " + lexer.mathopCount);
+        System.out.println("REFOPS:         " + lexer.refopCount);
+        System.out.println("NEWLINES:       " + lexer.newlineCount);
+        System.out.println("COMMENTS:       " + lexer.commentCount);
         
     }
 }
