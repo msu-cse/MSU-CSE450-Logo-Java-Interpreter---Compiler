@@ -32,9 +32,9 @@ Please see the [wiki](msu-cse450-ss11/wiki).
                   yum install ...
 -   Eclipse for Java Developers
     -   [Download][eclipse]
-    -   Install the ANTLRv3 IDE plugin for Eclipse.
-        -   [How to install software for Eclipse][eclipse-updatemgr]
-        -   Update Site: <http://antlrv3ide.sourceforge.net/updates>
+    -   Install the ANTLRv3 IDE plugin and EGit plugin for Eclipse.
+        -   `Help -> Eclipse Marketplace`
+    -   It is also probably worth downloading the Markdown plugin, but that's not on the Marketplace.  All of the `.md` files are Markdown. 
 -   ANTLRv3
     -   [Download][antlr-download] ANTLR v3 and ANTLRWorks IDE
     -   [Getting Started][antlr-started]
