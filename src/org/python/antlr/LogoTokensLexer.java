@@ -1,6 +1,5 @@
-package org.python.antlr;
-
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 LogoTokens.g 2011-01-22 14:08:25
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 LogoTokens.g 2011-01-22 15:29:32
+ package org.python.antlr; 
 
 import org.antlr.runtime.*;
 import java.util.Stack;
@@ -19,6 +18,13 @@ public class LogoTokensLexer extends Lexer {
     public static final int EOF=-1;
     public static final int ALPHA=4;
     public static final int COMMAND=6;
+     
+      public Integer mathopCount = 0;
+      public Integer commandCount = 0;
+      public Integer idCount = 0;
+      public Integer refopCount = 0;
+      public Integer numberCount = 0;
+
 
     // delegates
     // delegators
@@ -38,8 +44,8 @@ public class LogoTokensLexer extends Lexer {
         try {
             int _type = ALPHA;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // LogoTokens.g:5:8: ( ( 'a' .. 'z' | 'A' .. 'Z' ) )
-            // LogoTokens.g:5:10: ( 'a' .. 'z' | 'A' .. 'Z' )
+            // LogoTokens.g:14:8: ( ( 'a' .. 'z' | 'A' .. 'Z' ) )
+            // LogoTokens.g:14:10: ( 'a' .. 'z' | 'A' .. 'Z' )
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -66,11 +72,11 @@ public class LogoTokensLexer extends Lexer {
         try {
             int _type = DIGIT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // LogoTokens.g:6:7: ( ( '0' .. '9' ) )
-            // LogoTokens.g:6:9: ( '0' .. '9' )
+            // LogoTokens.g:15:7: ( ( '0' .. '9' ) )
+            // LogoTokens.g:15:9: ( '0' .. '9' )
             {
-            // LogoTokens.g:6:9: ( '0' .. '9' )
-            // LogoTokens.g:6:10: '0' .. '9'
+            // LogoTokens.g:15:9: ( '0' .. '9' )
+            // LogoTokens.g:15:10: '0' .. '9'
             {
             matchRange('0','9'); 
 
@@ -92,10 +98,10 @@ public class LogoTokensLexer extends Lexer {
         try {
             int _type = COMMAND;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // LogoTokens.g:9:9: ( ( 'print' | 'make' ) )
-            // LogoTokens.g:9:11: ( 'print' | 'make' )
+            // LogoTokens.g:18:9: ( ( 'print' | 'make' ) )
+            // LogoTokens.g:18:11: ( 'print' | 'make' )
             {
-            // LogoTokens.g:9:11: ( 'print' | 'make' )
+            // LogoTokens.g:18:11: ( 'print' | 'make' )
             int alt1=2;
             int LA1_0 = input.LA(1);
 
@@ -113,7 +119,7 @@ public class LogoTokensLexer extends Lexer {
             }
             switch (alt1) {
                 case 1 :
-                    // LogoTokens.g:9:12: 'print'
+                    // LogoTokens.g:18:12: 'print'
                     {
                     match("print"); 
 
@@ -121,7 +127,7 @@ public class LogoTokensLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // LogoTokens.g:9:20: 'make'
+                    // LogoTokens.g:18:20: 'make'
                     {
                     match("make"); 
 
@@ -147,8 +153,8 @@ public class LogoTokensLexer extends Lexer {
         try {
             int _type = ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // LogoTokens.g:11:6: ( ( ALPHA | '_' ) ( ALPHA | DIGIT | '_' )* )
-            // LogoTokens.g:11:8: ( ALPHA | '_' ) ( ALPHA | DIGIT | '_' )*
+            // LogoTokens.g:20:6: ( ( ALPHA | '_' ) ( ALPHA | DIGIT | '_' )* )
+            // LogoTokens.g:20:8: ( ALPHA | '_' ) ( ALPHA | DIGIT | '_' )*
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -159,7 +165,7 @@ public class LogoTokensLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // LogoTokens.g:11:20: ( ALPHA | DIGIT | '_' )*
+            // LogoTokens.g:20:20: ( ALPHA | DIGIT | '_' )*
             loop2:
             do {
                 int alt2=4;
@@ -244,21 +250,21 @@ public class LogoTokensLexer extends Lexer {
 
                 switch (alt2) {
             	case 1 :
-            	    // LogoTokens.g:11:21: ALPHA
+            	    // LogoTokens.g:20:21: ALPHA
             	    {
             	    mALPHA(); 
 
             	    }
             	    break;
             	case 2 :
-            	    // LogoTokens.g:11:27: DIGIT
+            	    // LogoTokens.g:20:27: DIGIT
             	    {
             	    mDIGIT(); 
 
             	    }
             	    break;
             	case 3 :
-            	    // LogoTokens.g:11:33: '_'
+            	    // LogoTokens.g:20:33: '_'
             	    {
             	    match('_'); 
 
@@ -286,8 +292,8 @@ public class LogoTokensLexer extends Lexer {
         try {
             int _type = MATHOP;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // LogoTokens.g:14:9: ( ( '+' | '-' | '*' | '/' | '%' | '(' | ')' ) )
-            // LogoTokens.g:14:11: ( '+' | '-' | '*' | '/' | '%' | '(' | ')' )
+            // LogoTokens.g:23:9: ( ( '+' | '-' | '*' | '/' | '%' | '(' | ')' ) )
+            // LogoTokens.g:23:11: ( '+' | '-' | '*' | '/' | '%' | '(' | ')' )
             {
             if ( input.LA(1)=='%'||(input.LA(1)>='(' && input.LA(1)<='+')||input.LA(1)=='-'||input.LA(1)=='/' ) {
                 input.consume();
@@ -298,6 +304,7 @@ public class LogoTokensLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
+             mathopCount++; 
 
             }
 
@@ -314,8 +321,8 @@ public class LogoTokensLexer extends Lexer {
         try {
             int _type = REFOP;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // LogoTokens.g:16:7: ( ( ':' | '\"' ) )
-            // LogoTokens.g:16:9: ( ':' | '\"' )
+            // LogoTokens.g:25:7: ( ( ':' | '\"' ) )
+            // LogoTokens.g:25:9: ( ':' | '\"' )
             {
             if ( input.LA(1)=='\"'||input.LA(1)==':' ) {
                 input.consume();
@@ -342,10 +349,10 @@ public class LogoTokensLexer extends Lexer {
         try {
             int _type = NUMBER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // LogoTokens.g:19:2: ( ( DIGIT )+ )
-            // LogoTokens.g:19:4: ( DIGIT )+
+            // LogoTokens.g:28:2: ( ( DIGIT )+ )
+            // LogoTokens.g:28:4: ( DIGIT )+
             {
-            // LogoTokens.g:19:4: ( DIGIT )+
+            // LogoTokens.g:28:4: ( DIGIT )+
             int cnt3=0;
             loop3:
             do {
@@ -359,7 +366,7 @@ public class LogoTokensLexer extends Lexer {
 
                 switch (alt3) {
             	case 1 :
-            	    // LogoTokens.g:19:5: DIGIT
+            	    // LogoTokens.g:28:5: DIGIT
             	    {
             	    mDIGIT(); 
 
@@ -391,10 +398,10 @@ public class LogoTokensLexer extends Lexer {
         try {
             int _type = NEWLINE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // LogoTokens.g:22:9: ( ( '\\r' )? '\\n' )
-            // LogoTokens.g:22:11: ( '\\r' )? '\\n'
+            // LogoTokens.g:31:9: ( ( '\\r' )? '\\n' )
+            // LogoTokens.g:31:11: ( '\\r' )? '\\n'
             {
-            // LogoTokens.g:22:11: ( '\\r' )?
+            // LogoTokens.g:31:11: ( '\\r' )?
             int alt4=2;
             int LA4_0 = input.LA(1);
 
@@ -403,7 +410,7 @@ public class LogoTokensLexer extends Lexer {
             }
             switch (alt4) {
                 case 1 :
-                    // LogoTokens.g:22:11: '\\r'
+                    // LogoTokens.g:31:11: '\\r'
                     {
                     match('\r'); 
 
@@ -429,11 +436,11 @@ public class LogoTokensLexer extends Lexer {
         try {
             int _type = COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // LogoTokens.g:25:5: ( ';' (~ ( '\\n' | '\\r' ) )* )
-            // LogoTokens.g:25:9: ';' (~ ( '\\n' | '\\r' ) )*
+            // LogoTokens.g:34:5: ( ';' (~ ( '\\n' | '\\r' ) )* )
+            // LogoTokens.g:34:9: ';' (~ ( '\\n' | '\\r' ) )*
             {
             match(';'); 
-            // LogoTokens.g:25:13: (~ ( '\\n' | '\\r' ) )*
+            // LogoTokens.g:34:13: (~ ( '\\n' | '\\r' ) )*
             loop5:
             do {
                 int alt5=2;
@@ -446,7 +453,7 @@ public class LogoTokensLexer extends Lexer {
 
                 switch (alt5) {
             	case 1 :
-            	    // LogoTokens.g:25:13: ~ ( '\\n' | '\\r' )
+            	    // LogoTokens.g:34:13: ~ ( '\\n' | '\\r' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -483,8 +490,8 @@ public class LogoTokensLexer extends Lexer {
         try {
             int _type = WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // LogoTokens.g:28:5: ( ( ' ' | '\\t' | '\\r' | '\\n' ) )
-            // LogoTokens.g:28:9: ( ' ' | '\\t' | '\\r' | '\\n' )
+            // LogoTokens.g:37:5: ( ( ' ' | '\\t' | '\\r' | '\\n' ) )
+            // LogoTokens.g:37:9: ( ' ' | '\\t' | '\\r' | '\\n' )
             {
             if ( (input.LA(1)>='\t' && input.LA(1)<='\n')||input.LA(1)=='\r'||input.LA(1)==' ' ) {
                 input.consume();

@@ -32,7 +32,7 @@ Please see the [wiki](msu-cse450-ss11/wiki).
                   yum install ...
 -   Eclipse for Java Developers
     -   [Download][eclipse]
-    -   Install the ANTLRv3 IDE plugin and EGit plugin for Eclipse.
+    -   Install the `ANTLRv3 IDE` plugin and `EGit` plugin for Eclipse.
         -   `Help -> Eclipse Marketplace`
     -   It is also probably worth downloading the Markdown plugin, but that's not on the Marketplace.  All of the `.md` files are Markdown. 
 -   ANTLRv3

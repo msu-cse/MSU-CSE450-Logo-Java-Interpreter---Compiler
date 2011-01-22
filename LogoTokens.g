@@ -2,6 +2,15 @@
 grammar LogoTokens;
 /* Character Patterns */
 
+@lexer::header{ package org.python.antlr; } 
+@header{ package edu.msu.cse.cse450; }
+@lexer::members{ 
+  public Integer mathopCount = 0;
+  public Integer commandCount = 0;
+  public Integer idCount = 0;
+  public Integer refopCount = 0;
+  public Integer numberCount = 0;
+}
 ALPHA 	: ('a'..'z'|'A'..'Z');
 DIGIT	: ('0'..'9');
 
@@ -11,7 +20,7 @@ COMMAND : ('print'|'make');
 ID  	: (ALPHA|'_') (ALPHA|DIGIT|'_')*
     	;
 
-MATHOP  : ('+'|'-'|'*'|'/'|'%'|'('|')');
+MATHOP  : ('+'|'-'|'*'|'/'|'%'|'('|')') { mathopCount++; };
 
 REFOP	: (':'|'"');
 
@@ -33,4 +42,4 @@ WS  :   ( ' '
     ;
 
 lexerRule 
-	: COMMAND? ID COMMENT? NEWLINE;
+	: (COMMAND|ID|MATHOP|REFOP|NUMBER|COMMENT)* NEWLINE? EOF;
