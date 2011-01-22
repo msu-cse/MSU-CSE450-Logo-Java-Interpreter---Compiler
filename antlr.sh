@@ -1,2 +1,2 @@
 #!/bin/sh
-java -jar $ANTLR_HOME/antlr-*.jar $*
+java -jar lib/antlr-*.jar $*
