@@ -1,7 +1,5 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 LogoTokens.g 2011-01-22 13:03:26
-
-  package edu.msu.cse.cse450;
-
+package edu.msu.cse.cse450;
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 LogoTokens.g 2011-01-22 14:08:24
 
 import org.antlr.runtime.*;
 import java.util.Stack;
@@ -42,14 +40,14 @@ public class LogoTokensParser extends Parser {
 
 
 
-    // $ANTLR start "program"
-    // LogoTokens.g:44:1: program : ( COMMAND )? ID ( COMMENT )? NEWLINE ;
-    public final void program() throws RecognitionException {
+    // $ANTLR start "lexerRule"
+    // LogoTokens.g:35:1: lexerRule : ( COMMAND )? ID ( COMMENT )? NEWLINE ;
+    public final void lexerRule() throws RecognitionException {
         try {
-            // LogoTokens.g:45:2: ( ( COMMAND )? ID ( COMMENT )? NEWLINE )
-            // LogoTokens.g:45:4: ( COMMAND )? ID ( COMMENT )? NEWLINE
+            // LogoTokens.g:36:2: ( ( COMMAND )? ID ( COMMENT )? NEWLINE )
+            // LogoTokens.g:36:4: ( COMMAND )? ID ( COMMENT )? NEWLINE
             {
-            // LogoTokens.g:45:4: ( COMMAND )?
+            // LogoTokens.g:36:4: ( COMMAND )?
             int alt1=2;
             int LA1_0 = input.LA(1);
 
@@ -58,17 +56,17 @@ public class LogoTokensParser extends Parser {
             }
             switch (alt1) {
                 case 1 :
-                    // LogoTokens.g:45:4: COMMAND
+                    // LogoTokens.g:36:4: COMMAND
                     {
-                    match(input,COMMAND,FOLLOW_COMMAND_in_program273); 
+                    match(input,COMMAND,FOLLOW_COMMAND_in_lexerRule246); 
 
                     }
                     break;
 
             }
 
-            match(input,ID,FOLLOW_ID_in_program276); 
-            // LogoTokens.g:45:16: ( COMMENT )?
+            match(input,ID,FOLLOW_ID_in_lexerRule249); 
+            // LogoTokens.g:36:16: ( COMMENT )?
             int alt2=2;
             int LA2_0 = input.LA(1);
 
@@ -77,16 +75,16 @@ public class LogoTokensParser extends Parser {
             }
             switch (alt2) {
                 case 1 :
-                    // LogoTokens.g:45:16: COMMENT
+                    // LogoTokens.g:36:16: COMMENT
                     {
-                    match(input,COMMENT,FOLLOW_COMMENT_in_program278); 
+                    match(input,COMMENT,FOLLOW_COMMENT_in_lexerRule251); 
 
                     }
                     break;
 
             }
 
-            match(input,NEWLINE,FOLLOW_NEWLINE_in_program281); 
+            match(input,NEWLINE,FOLLOW_NEWLINE_in_lexerRule254); 
 
             }
 
@@ -99,16 +97,16 @@ public class LogoTokensParser extends Parser {
         }
         return ;
     }
-    // $ANTLR end "program"
+    // $ANTLR end "lexerRule"
 
     // Delegated rules
 
 
  
 
-    public static final BitSet FOLLOW_COMMAND_in_program273 = new BitSet(new long[]{0x0000000000000080L});
-    public static final BitSet FOLLOW_ID_in_program276 = new BitSet(new long[]{0x0000000000001800L});
-    public static final BitSet FOLLOW_COMMENT_in_program278 = new BitSet(new long[]{0x0000000000000800L});
-    public static final BitSet FOLLOW_NEWLINE_in_program281 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_COMMAND_in_lexerRule246 = new BitSet(new long[]{0x0000000000000080L});
+    public static final BitSet FOLLOW_ID_in_lexerRule249 = new BitSet(new long[]{0x0000000000001800L});
+    public static final BitSet FOLLOW_COMMENT_in_lexerRule251 = new BitSet(new long[]{0x0000000000000800L});
+    public static final BitSet FOLLOW_NEWLINE_in_lexerRule254 = new BitSet(new long[]{0x0000000000000002L});
 
 }
