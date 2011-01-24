@@ -2,7 +2,7 @@
 grammar LogoTokens;
 /* Character Patterns */
 
-@lexer::header{ package org.python.antlr; } 
+@lexer::header{ package edu.msu.cse.cse450; } 
 @header{ package edu.msu.cse.cse450; }
 @lexer::members{ 
   public Integer mathopCount = 0;
@@ -14,8 +14,9 @@ grammar LogoTokens;
   public Integer commentCount = 0;
 
 }
-ALPHA : ('a'..'z'|'A'..'Z');
-DIGIT : '0'..'9';
+
+fragment ALPHA : ('a'..'z'|'A'..'Z');
+fragment DIGIT : '0'..'9';
 
 COMMAND 
       : ('print'|'make') { commandCount++; };
@@ -42,5 +43,5 @@ WS    : ( ' '
         ) {$channel=HIDDEN;}
       ;
 
-expression: (COMMAND|ID|MATHOP|REFOP|NUMBER|COMMENT);
-program : (expression* NEWLINE)+ EOF;
+expression: (COMMAND|ID|MATHOP|REFOP|NUMBER|COMMENT|WS);
+program : expression+;
