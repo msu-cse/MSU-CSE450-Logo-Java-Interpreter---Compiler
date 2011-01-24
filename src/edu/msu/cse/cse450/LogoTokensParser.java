@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 LogoTokens.g 2011-01-22 15:29:32
+// $ANTLR 3.3 Nov 30, 2010 12:50:56 LogoTokens.g 2011-01-24 16:32:11
  package edu.msu.cse.cse450; 
 
 import org.antlr.runtime.*;
@@ -10,17 +10,17 @@ public class LogoTokensParser extends Parser {
     public static final String[] tokenNames = new String[] {
         "<invalid>", "<EOR>", "<DOWN>", "<UP>", "ALPHA", "DIGIT", "COMMAND", "ID", "MATHOP", "REFOP", "NUMBER", "NEWLINE", "COMMENT", "WS"
     };
-    public static final int REFOP=9;
-    public static final int WS=13;
-    public static final int NEWLINE=11;
-    public static final int MATHOP=8;
-    public static final int NUMBER=10;
-    public static final int DIGIT=5;
-    public static final int COMMENT=12;
-    public static final int ID=7;
     public static final int EOF=-1;
     public static final int ALPHA=4;
+    public static final int DIGIT=5;
     public static final int COMMAND=6;
+    public static final int ID=7;
+    public static final int MATHOP=8;
+    public static final int REFOP=9;
+    public static final int NUMBER=10;
+    public static final int NEWLINE=11;
+    public static final int COMMENT=12;
+    public static final int WS=13;
 
     // delegates
     // delegators
@@ -40,65 +40,22 @@ public class LogoTokensParser extends Parser {
 
 
 
-    // $ANTLR start "lexerRule"
-    // LogoTokens.g:44:1: lexerRule : ( COMMAND | ID | MATHOP | REFOP | NUMBER | COMMENT )* ( NEWLINE )? EOF ;
-    public final void lexerRule() throws RecognitionException {
+    // $ANTLR start "expression"
+    // LogoTokens.g:46:1: expression : ( COMMAND | ID | MATHOP | REFOP | NUMBER | COMMENT | WS ) ;
+    public final void expression() throws RecognitionException {
         try {
-            // LogoTokens.g:45:2: ( ( COMMAND | ID | MATHOP | REFOP | NUMBER | COMMENT )* ( NEWLINE )? EOF )
-            // LogoTokens.g:45:4: ( COMMAND | ID | MATHOP | REFOP | NUMBER | COMMENT )* ( NEWLINE )? EOF
+            // LogoTokens.g:46:11: ( ( COMMAND | ID | MATHOP | REFOP | NUMBER | COMMENT | WS ) )
+            // LogoTokens.g:46:13: ( COMMAND | ID | MATHOP | REFOP | NUMBER | COMMENT | WS )
             {
-            // LogoTokens.g:45:4: ( COMMAND | ID | MATHOP | REFOP | NUMBER | COMMENT )*
-            loop1:
-            do {
-                int alt1=2;
-                int LA1_0 = input.LA(1);
-
-                if ( ((LA1_0>=COMMAND && LA1_0<=NUMBER)||LA1_0==COMMENT) ) {
-                    alt1=1;
-                }
-
-
-                switch (alt1) {
-            	case 1 :
-            	    // LogoTokens.g:
-            	    {
-            	    if ( (input.LA(1)>=COMMAND && input.LA(1)<=NUMBER)||input.LA(1)==COMMENT ) {
-            	        input.consume();
-            	        state.errorRecovery=false;
-            	    }
-            	    else {
-            	        MismatchedSetException mse = new MismatchedSetException(null,input);
-            	        throw mse;
-            	    }
-
-
-            	    }
-            	    break;
-
-            	default :
-            	    break loop1;
-                }
-            } while (true);
-
-            // LogoTokens.g:45:46: ( NEWLINE )?
-            int alt2=2;
-            int LA2_0 = input.LA(1);
-
-            if ( (LA2_0==NEWLINE) ) {
-                alt2=1;
+            if ( (input.LA(1)>=COMMAND && input.LA(1)<=NUMBER)||(input.LA(1)>=COMMENT && input.LA(1)<=WS) ) {
+                input.consume();
+                state.errorRecovery=false;
             }
-            switch (alt2) {
-                case 1 :
-                    // LogoTokens.g:45:46: NEWLINE
-                    {
-                    match(input,NEWLINE,FOLLOW_NEWLINE_in_lexerRule282); 
-
-                    }
-                    break;
-
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                throw mse;
             }
 
-            match(input,EOF,FOLLOW_EOF_in_lexerRule285); 
 
             }
 
@@ -111,15 +68,70 @@ public class LogoTokensParser extends Parser {
         }
         return ;
     }
-    // $ANTLR end "lexerRule"
+    // $ANTLR end "expression"
+
+
+    // $ANTLR start "program"
+    // LogoTokens.g:47:1: program : ( expression )+ ;
+    public final void program() throws RecognitionException {
+        try {
+            // LogoTokens.g:47:9: ( ( expression )+ )
+            // LogoTokens.g:47:11: ( expression )+
+            {
+            // LogoTokens.g:47:11: ( expression )+
+            int cnt1=0;
+            loop1:
+            do {
+                int alt1=2;
+                int LA1_0 = input.LA(1);
+
+                if ( ((LA1_0>=COMMAND && LA1_0<=NUMBER)||(LA1_0>=COMMENT && LA1_0<=WS)) ) {
+                    alt1=1;
+                }
+
+
+                switch (alt1) {
+            	case 1 :
+            	    // LogoTokens.g:47:11: expression
+            	    {
+            	    pushFollow(FOLLOW_expression_in_program299);
+            	    expression();
+
+            	    state._fsp--;
+
+
+            	    }
+            	    break;
+
+            	default :
+            	    if ( cnt1 >= 1 ) break loop1;
+                        EarlyExitException eee =
+                            new EarlyExitException(1, input);
+                        throw eee;
+                }
+                cnt1++;
+            } while (true);
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return ;
+    }
+    // $ANTLR end "program"
 
     // Delegated rules
 
 
  
 
-    public static final BitSet FOLLOW_set_in_lexerRule267 = new BitSet(new long[]{0x0000000000001FC0L});
-    public static final BitSet FOLLOW_NEWLINE_in_lexerRule282 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_lexerRule285 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_set_in_expression278 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_expression_in_program299 = new BitSet(new long[]{0x00000000000037C2L});
 
 }
