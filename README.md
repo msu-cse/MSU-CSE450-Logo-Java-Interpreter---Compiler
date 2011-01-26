@@ -41,13 +41,15 @@ Please see the [wiki](msu-cse450-ss11/wiki).
 
 # Usage
 
-- Make your changes to `LogoTokens.g` or `Test.java`
-- To compile the ANTLR grammar into Java code, run `make-grammar-java.sh`
-- Now that you have the Java code, you need to compile it into a runnable JAR file.  Run `ant` or use the Ant pane in Eclipse to do this.
-- We now have a runnable `grammar.java`.  To run it, run `run-grammar.sh`.
-    - When run by itself, type the input and press `Ctrl-D` to end the input
-    - Use the format `echo '1 + 1' | run-grammar.sh` to run a predefined bit of text *(in this example, '1+1')*
-    - To read in a file, use the format `run-grammer.sh < the-file`
+-   Make your changes to `LogoTokens.g` or `Test.java`
+-   Build everything: `ant` *(or build from within Eclipse with the Ant pane)*
+-   Run the grammar: 
+    
+        ant run < test/complex_test.txt
+    *(or `java -jar build/grammar.jar < test/complex_test.txt`)*
+-   Run the grammar, ***and*** verify against expected results:
+
+        diff test/test_X_results.txt <(java -jar build/grammar.jar < test/X_test.txt) && echo "OK"
 
 [antlr-download]: http://www.antlr.org/download.html "Download ANTLR"
 [antlr-started]: http://www.antlr.org/wiki/display/ANTLR3/FAQ+-+Getting+Started "Getting Started with ANTLR"
