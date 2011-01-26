@@ -31,6 +31,7 @@
 	</target>
 
 	<target name="create_run_jar" depends="prepare,build_grammar_src">
+		<mkdir dir="bin"/>
 		<jar destfile="${grammar.jar}" filesetmanifest="mergewithoutmain">
 			<manifest>
 				<attribute name="Main-Class" value="${src.main}" />
