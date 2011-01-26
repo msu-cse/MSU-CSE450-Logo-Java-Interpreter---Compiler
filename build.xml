@@ -6,11 +6,13 @@
 
 	<target name="prepare">
 		<mkdir dir="${build.dir}" />
+        <mkdir dir="bin"/>
 	</target>
 
 	<target name="clean">
 		<delete dir="${build.dir}" />
 		<delete dir="${src.msu}" includes="${grammar.name}*" />
+        <delete dir="bin"/>
 		<echo message="MSU Src: ${src.msu}" />
 	</target>
 
@@ -31,7 +33,6 @@
 	</target>
 
 	<target name="create_run_jar" depends="prepare,build_grammar_src">
-		<mkdir dir="bin"/>
 		<jar destfile="${grammar.jar}" filesetmanifest="mergewithoutmain">
 			<manifest>
 				<attribute name="Main-Class" value="${src.main}" />
@@ -40,7 +41,6 @@
 			<fileset dir="bin" />
 			<zipfileset excludes="META-INF/*.SF" src="${antlr.lib}" />
 		</jar>
-		<delete dir="bin" />
 	</target>
 
 	<target name="run">
