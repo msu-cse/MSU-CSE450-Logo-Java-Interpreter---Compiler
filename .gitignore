@@ -1,5 +1,13 @@
 wiki
 
+# -- ANTLR ignores --
+output
+grammar.jar
+*LogoTokensLexer.java
+*LogoTokensParser.java
+*LogoTokens.tokens
+# -- ANTLR ignores --
+
 # -- Java ignores --
 *.class
 target/

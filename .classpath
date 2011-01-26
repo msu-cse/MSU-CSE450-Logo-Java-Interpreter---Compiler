@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="src/|test/|lib/" kind="src" path=""/>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry excluding="test/|lib/|src/java/|src/antlr/|src/" kind="src" path=""/>
+	<classpathentry kind="src" path="src/java"/>
+	<classpathentry kind="src" path="src/antlr"/>
 	<classpathentry kind="lib" path="lib/antlr-3.3-complete.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>

@@ -1,15 +1,48 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="create_run_jar" name="Create Runnable Jar for Project CSE450-SS10">
-    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
-    <!--ANT 1.7 is required                                        -->
-    <target name="create_run_jar">
-        <jar destfile="grammar.jar" filesetmanifest="mergewithoutmain">
-            <manifest>
-                <attribute name="Main-Class" value="edu.msu.cse.cse450.Test"/>
-                <attribute name="Class-Path" value="."/>
-            </manifest>
-            <fileset dir="bin"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/antlr-3.3-complete.jar"/>
-        </jar>
-    </target>
+	<!--this file was created by Eclipse Runnable JAR Export Wizard-->
+	<!--ANT 1.7 is required                                        -->
+	<property file="build.properties" />
+
+	<target name="prepare">
+		<mkdir dir="${build.dir}" />
+	</target>
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+		<delete dir="${src.msu}" includes="${grammar.name}*" />
+		<echo message="MSU Src: ${src.msu}" />
+	</target>
+
+	<uptodate property="grammar.uptodate" targetfile="${grammar.src}">
+		<srcfiles dir="${src.msu}" includes="${grammar.name}*.java" />
+	</uptodate>
+	<target name="check" unless="grammar.uptodate">
+		<echo message="Grammar is not up-to-date" />
+	</target>
+	
+
+	<target name="build_grammar_src" depends="prepare">
+		<java jar="${antlr.lib}" fork="true" failonerror="true" timeout="10000">
+			<arg value="-o" />
+			<arg path="${src.msu}" />
+			<arg file="${grammar.src}" />
+		</java>
+	</target>
+
+	<target name="create_run_jar" depends="prepare,build_grammar_src">
+		<jar destfile="${grammar.jar}" filesetmanifest="mergewithoutmain">
+			<manifest>
+				<attribute name="Main-Class" value="${src.main}" />
+				<attribute name="Class-Path" value="." />
+			</manifest>
+			<fileset dir="bin" />
+			<zipfileset excludes="META-INF/*.SF" src="${antlr.lib}" />
+		</jar>
+		<delete dir="bin" />
+	</target>
+
+	<target name="run">
+		<java jar="${grammar.jar}" fork="true" failonerror="true" />
+	</target>
 </project>
