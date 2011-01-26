@@ -19,9 +19,8 @@ Please see the [wiki](msu-cse450-ss11/wiki).
 
 # Usage
 
-*Note to the TA: The source is in the `edu.msu.cse.cse450` package.*
+*Note to the TA: The source is in the `edu.msu.cse.cse450` package.  Also, if you want to see how we build everything, please download a [zipball][zipball] of the project.*
 
--   Make your changes to `LogoTokens.g` or `Test.java`
 -   Build everything: `ant` *(or build from within Eclipse with the Ant pane)*
 -   Run the grammar: 
     
@@ -30,3 +29,5 @@ Please see the [wiki](msu-cse450-ss11/wiki).
 -   Run the grammar, ***and*** verify against expected results:
 
         diff test/test_X_results.txt <(java -jar build/grammar.jar < test/X_test.txt) && echo "OK"
+        
+[zipball]: https://github.com/msu-cse450-ss2010/project/zipball/master
