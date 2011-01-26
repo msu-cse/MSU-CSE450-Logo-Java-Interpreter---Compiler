@@ -4,6 +4,7 @@ grammar LogoTokens;
 
 @lexer::header{ package edu.msu.cse.cse450; } 
 @header{ package edu.msu.cse.cse450; }
+
 @lexer::members{ 
   public Integer mathopCount = 0;
   public Integer commandCount = 0;
@@ -34,7 +35,7 @@ NEWLINE
       : '\r'? '\n' { newlineCount++; };
 
 COMMENT
-      : ';' ~('\n'|'\r')* {$channel=HIDDEN; commentCount++; };
+      : ';' ~('\n')* {  commentCount++; };
 
 WS    : ( ' '
         | '\t'
@@ -43,5 +44,5 @@ WS    : ( ' '
         ) {$channel=HIDDEN;}
       ;
 
-expression: (COMMAND|ID|MATHOP|REFOP|NUMBER|COMMENT|WS);
+expression: COMMAND|ID|MATHOP|REFOP|NUMBER|COMMENT|NEWLINE;
 program : expression+;

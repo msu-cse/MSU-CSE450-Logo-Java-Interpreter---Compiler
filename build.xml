@@ -5,7 +5,7 @@
     <target name="create_run_jar">
         <jar destfile="grammar.jar" filesetmanifest="mergewithoutmain">
             <manifest>
-                <attribute name="Main-Class" value="Test"/>
+                <attribute name="Main-Class" value="edu.msu.cse.cse450.Test"/>
                 <attribute name="Class-Path" value="."/>
             </manifest>
             <fileset dir="bin"/>
