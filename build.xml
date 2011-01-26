@@ -13,6 +13,7 @@
 		<delete dir="${build.dir}" />
 		<delete dir="${src.msu}" includes="${grammar.name}*" />
         <delete dir="bin"/>
+		<delete dir="${src.java}" includes="**/*.class" />
 		<echo message="MSU Src: ${src.msu}" />
 	</target>
 
@@ -32,10 +33,17 @@
 		</java>
 	</target>
 
-	<target name="create_run_jar" depends="prepare,build_grammar_src">
-		<jar destfile="${grammar.jar}" filesetmanifest="mergewithoutmain">
+	<target name="compile">
+		<javac srcdir="src/java" classpath="${antlr.lib}"/>
+	</target>
+	
+	<target name="create_run_jar" depends="prepare,build_grammar_src,compile">
+		<jar destfile="${grammar.jar}" 
+			filesetmanifest="mergewithoutmain" 
+			basedir="src/java"
+			includes="**/*.class">
 			<manifest>
-				<attribute name="Main-Class" value="${src.main}" />
+				<attribute name="Main-Class" value="edu.msu.cse.cse450.Test" />
 				<attribute name="Class-Path" value="." />
 			</manifest>
 			<fileset dir="bin" />
