@@ -6,6 +6,13 @@ Project Members
 - Kole Reece
 - Zach Riggle
 
+# Group Member Contributions
+
+- Zach contributed the most.  He set up the repository that the group used to share files and work on the project remotely.  He also solved a lot of problems with the grammar.  
+- Brandon and Kole contributed their share of the work.  Both members showed up to the group meeting where we set up the repository and created a rough draft of the grammar and test file.  
+
+All three group members communicated well and did at least all that was asked of them.  There were no issues with any of the group members.
+
 # Project Definitions
 
 Please see the [wiki](msu-cse450-ss11/wiki).
