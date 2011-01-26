@@ -12,6 +12,8 @@ Please see the [wiki](msu-cse450-ss11/wiki).
 
 # Usage
 
+*Note to the TA: The source is in the `edu.msu.cse.cse450` package.*
+
 -   Make your changes to `LogoTokens.g` or `Test.java`
 -   Build everything: `ant` *(or build from within Eclipse with the Ant pane)*
 -   Run the grammar: 
