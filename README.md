@@ -1,4 +1,4 @@
-# CSE450 Spring 2011 Project
+# [CSE450 Spring 2011 Project](https://github.com/msu-cse450-ss2010/project)
 
 Project Members
 
@@ -6,52 +6,28 @@ Project Members
 - Kole Reece
 - Zach Riggle
 
+# Group Member Contributions
+
+- Zach contributed the most.  He set up the repository that the group used to share files and work on the project remotely.  He also solved a lot of problems with the grammar.  
+- Brandon and Kole contributed their share of the work.  Both members showed up to the group meeting where we set up the repository and created a rough draft of the grammar and test file.  
+
+All three group members communicated well and did at least all that was asked of them.  There were no issues with any of the group members.
+
 # Project Definitions
 
 Please see the [wiki](msu-cse450-ss11/wiki).
 
-# Prerequisites
--   Install Git
-    - Linux: `apt-get install git` or `yum install git` or similar
-    - OS X:  `brew install git` (requires [Homebrew](https://github.com/mxcl/homebrew/blob/master/README.md))
-    - Windows: [msysgit](http://code.google.com/p/msysgit/)
--   Fork the repository
-    - Create a GitHub account
-    - Fork the project
-    - Follow the on-screen instructions to clone your fork
--   Java JDK
-    -   Mac users don't have to do anything.
-    -   [Windows Instructions][java-win] for downloading, installing, and setting environment variables.
-    -   [Linux Instructions][java-linux] for setting the environment variables *only*.
-        -   Linux installation is often some variant of 
-
-                  apt-get install sun-java6-jdk sun-java6-jre
-
-            or
-
-                  yum install ...
--   Eclipse for Java Developers
-    -   [Download][eclipse]
-    -   Install the `ANTLRv3 IDE` plugin and `EGit` plugin for Eclipse.
-        -   `Help -> Eclipse Marketplace`
-    -   It is also probably worth downloading the Markdown plugin, but that's not on the Marketplace.  All of the `.md` files are Markdown. 
--   ANTLRv3
-    -   [Download][antlr-download] ANTLR v3 and ANTLRWorks IDE
-    -   [Getting Started][antlr-started]
-
 # Usage
 
-- Make your changes to `LogoTokens.g` or `Test.java`
-- To compile the ANTLR grammar into Java code, run `make-grammar-java.sh`
-- Now that you have the Java code, you need to compile it into a runnable JAR file.  Run `ant` or use the Ant pane in Eclipse to do this.
-- We now have a runnable `grammar.java`.  To run it, run `run-grammar.sh`.
-    - When run by itself, type the input and press `Ctrl-D` to end the input
-    - Use the format `echo '1 + 1' | run-grammar.sh` to run a predefined bit of text *(in this example, '1+1')*
-    - To read in a file, use the format `run-grammer.sh < the-file`
+*Note to the TA: The source is in the `edu.msu.cse.cse450` package.  Also, if you want to see how we build everything, please download a [zipball][zipball] of the project.*
 
-[antlr-download]: http://www.antlr.org/download.html "Download ANTLR"
-[antlr-started]: http://www.antlr.org/wiki/display/ANTLR3/FAQ+-+Getting+Started "Getting Started with ANTLR"
-[java-linux]: http://www.cyberciti.biz/faq/linux-unix-set-java_home-path-variable/
-[java-win]: http://ist.berkeley.edu/as-ag/technology/howto/install-java-sdk-win.html
-[eclipse]: http://www.eclipse.org/downloads/packages/eclipse-ide-java-developers/heliossr1
-[eclipse-updatemgr]: http://help.eclipse.org/helios/index.jsp?topic=/org.eclipse.platform.doc.user/tasks/tasks-34.htm
+-   Build everything: `ant` *(or build from within Eclipse with the Ant pane)*
+-   Run the grammar: 
+    
+        ant run < test/complex_test.txt
+    *(or `java -jar build/grammar.jar < test/complex_test.txt`)*
+-   Run the grammar, ***and*** verify against expected results:
+
+        diff test/test_X_results.txt <(java -jar build/grammar.jar < test/X_test.txt) && echo "OK"
+        
+[zipball]: https://github.com/msu-cse450-ss2010/project/zipball/master

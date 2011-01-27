@@ -1,5 +1,13 @@
 wiki
 
+# -- ANTLR ignores --
+output
+grammar.jar
+*LogoTokensLexer.java
+*LogoTokensParser.java
+*LogoTokens.tokens
+# -- ANTLR ignores --
+
 # -- Java ignores --
 *.class
 target/
@@ -27,6 +35,7 @@ local.properties
 
 # -- OSX-specific
 .DS_Store?
+.DS_Store
 Icon?
 ._*
 .Spotlight-V100
