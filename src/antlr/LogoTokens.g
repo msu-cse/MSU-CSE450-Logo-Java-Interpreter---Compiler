@@ -16,6 +16,56 @@ grammar LogoTokens;
 
 }
 
+
+program 
+    : (statement|NEWLINE)+
+    ;
+
+statement
+    : (expression|make|print) COMMENT? NEWLINE
+    ;
+
+val: ':' ID;
+ref: '"' ID;
+
+make
+    : 'make' ref expression
+    ;
+
+print
+    : 'print' expression
+    ;
+
+term
+    : val
+    | '(' expression ')'
+    | NUMBER
+    ; 
+
+negation
+    : 'not'* term
+    ;
+    
+unary
+    : ('+'|'-')* negation
+    ;
+
+mult
+    : unary (('*'|'/'|'%') unary)*
+    ;
+
+add
+    : mult (('+'|'-') mult)*
+    ;
+
+equality
+    : add (( '<' | '>' | '==' | '!=' | '<=' | '>=' ) add)*
+    ;
+
+expression
+    : equality (('and'|'or') equality)*
+    ;
+
 fragment ALPHA : ('a'..'z'|'A'..'Z');
 fragment DIGIT : '0'..'9';
 
@@ -24,10 +74,6 @@ COMMAND
 
 ID    : (ALPHA|'_') (ALPHA|DIGIT|'_')* { idCount++; };
 
-MATHOP: ('+'|'-'|'*'|'/'|'%'|'('|')') { mathopCount++; };
-
-REFOP : (':'|'"') { refopCount++; };
-
 NUMBER 
       : (DIGIT)+ { numberCount++; };
 
@@ -35,7 +81,7 @@ NEWLINE
       : '\r'? '\n' { newlineCount++; };
 
 COMMENT
-      : ';' ~('\n')* {  commentCount++; };
+      : ';' ~('\n')* {  commentCount++; $channel=HIDDEN; };
 
 WS    : ( ' '
         | '\t'
@@ -43,6 +89,3 @@ WS    : ( ' '
         | '\n'
         ) {$channel=HIDDEN;}
       ;
-
-expression: COMMAND|ID|MATHOP|REFOP|NUMBER|COMMENT|NEWLINE;
-program : expression+;
