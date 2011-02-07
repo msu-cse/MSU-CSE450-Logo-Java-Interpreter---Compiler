@@ -1,0 +1,7 @@
+COMMANDS:       1
+IDS:            1
+NUMBERS:        3
+MATHOPS:        4
+REFOPS:         1
+NEWLINES:       1
+COMMENTS:       1

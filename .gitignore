@@ -1,0 +1,56 @@
+wiki
+
+# -- ANTLR ignores --
+output
+grammar.jar
+*LogoTokensLexer.java
+*LogoTokensParser.java
+*LogoTokens.tokens
+# -- ANTLR ignores --
+
+# -- Java ignores --
+*.class
+target/
+# -- Java ignores --
+
+# -- Eclipse ignores
+*.pydevproject
+.project
+.metadata
+bin/**
+tmp/**
+tmp/**/*
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.classpath
+.settings/
+.loadpath
+
+# CDT-specific
+.cproject
+# -- Eclipse ignores
+
+# -- OSX-specific
+.DS_Store?
+.DS_Store
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+# -- OSX-specific
+
+# -- TextMate
+*.tmproj
+*.tmproject
+tmtags
+# -- TextMate
+
+# -- Vi
+*.swp
+*.swo
+.*.sw[a-z]
+*.un~
+# -- Vi

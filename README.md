@@ -1,4 +1,4 @@
-# CSE450 Spring 2011 Project
+# [CSE450 Spring 2011 Project](https://github.com/msu-cse450-ss2010/project)
 
 Project Members
 
@@ -10,38 +10,17 @@ Project Members
 
 Please see the [wiki](msu-cse450-ss11/wiki).
 
-# Prerequisites
--   Install Git
-    - Linux: `apt-get install git` or `yum install git` or similar
-    - OS X:  `brew install git` (requires [Homebrew](https://github.com/mxcl/homebrew/blob/master/README.md))
-    - Windows: [msysgit](http://code.google.com/p/msysgit/)
--   Fork the repository
-    - Create a GitHub account
-    - Fork the project
-    - Follow the on-screen instructions to clone your fork
--   Java JDK
-    -   Mac users don't have to do anything.
-    -   [Windows Instructions][java-win] for downloading, installing, and setting environment variables.
-    -   [Linux Instructions][java-linux] for setting the environment variables *only*.
-        -   Linux installation is often some variant of 
+# Usage
 
-                  apt-get install sun-java6-jdk sun-java6-jre
+*Note to the TA: The source is in the `edu.msu.cse.cse450` package.  Also, if you want to see how we build everything, please download a [zipball][zipball] of the project.*
 
-            or
+-   Build everything: `ant` *(or build from within Eclipse with the Ant pane)*
+-   Run the grammar: 
+    
+        ant run < test/complex_test.txt
+    *(or `java -jar build/grammar.jar < test/complex_test.txt`)*
+-   Run the grammar, ***and*** verify against expected results:
 
-                  yum install ...
--   Eclipse for Java Developers
-    -   [Download][eclipse]
-    -   Install the ANTLRv3 IDE plugin for Eclipse.
-        -   [How to install software for Eclipse][eclipse-updatemgr]
-        -   Update Site: <http://antlrv3ide.sourceforge.net/updates>
--   ANTLRv3
-    -   [Download][antlr-download] ANTLR v3 and ANTLRWorks IDE
-    -   [Getting Started][antlr-started]
-
-[antlr-download]: http://www.antlr.org/download.html "Download ANTLR"
-[antlr-started]: http://www.antlr.org/wiki/display/ANTLR3/FAQ+-+Getting+Started "Getting Started with ANTLR"
-[java-linux]: http://www.cyberciti.biz/faq/linux-unix-set-java_home-path-variable/
-[java-win]: http://ist.berkeley.edu/as-ag/technology/howto/install-java-sdk-win.html
-[eclipse]: http://www.eclipse.org/downloads/packages/eclipse-ide-java-developers/heliossr1
-[eclipse-updatemgr]: http://help.eclipse.org/helios/index.jsp?topic=/org.eclipse.platform.doc.user/tasks/tasks-34.htm
+        diff test/test_X_results.txt <(java -jar build/grammar.jar < test/X_test.txt) && echo "OK"
+        
+[zipball]: https://github.com/msu-cse450-ss2010/project/zipball/master
