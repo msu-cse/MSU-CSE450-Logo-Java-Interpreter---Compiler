@@ -34,7 +34,7 @@
 	</target>
 
 	<target name="compile">
-		<javac srcdir="src/java" classpath="${antlr.lib}"/>
+		<javac srcdir="src/java" classpath="${antlr.lib}" includeantruntime="false" />
 	</target>
 	
 	<target name="create_run_jar" depends="prepare,build_grammar_src,compile">

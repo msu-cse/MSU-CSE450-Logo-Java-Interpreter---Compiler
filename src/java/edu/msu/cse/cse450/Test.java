@@ -25,6 +25,7 @@ public class Test {
         RuleReturnScope scope = parser.program();
         CommonTree tree = (CommonTree) scope.getTree();
         
-        System.out.println("Original tree: "+tree.toStringTree()); // print the tree
+        System.out.println("AST: ");
+        System.out.println(tree.toStringTree()); // print the tree
     }
 }

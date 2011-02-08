@@ -18,11 +18,11 @@ tokens { NIL; }
 }
 
 program 
-    : (statement|NEWLINE)+
+    : (statement+)
     ;
 
 statement
-    : (expression|make|print|while_|if_) COMMENT? NEWLINE
+    : (expression|make|print|while_|if_)? COMMENT? NEWLINE
     ;
 
 val: ':'^ ID;
@@ -50,7 +50,7 @@ print
 // -- EXPRESSIONS --
 term
     : val
-    | '(' expression ')' -> ^(expression)
+    | '('! expression ')'!
     | NUMBER
     ; 
 
