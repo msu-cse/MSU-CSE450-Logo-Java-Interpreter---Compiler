@@ -18,11 +18,11 @@ tokens { NIL; }
 }
 
 program 
-    : (statement+)
+    : (statement? NEWLINE!)+
     ;
 
 statement
-    : (expression|make|print|while_|if_)? COMMENT? NEWLINE
+    : (expression|make|print|while_|if_) COMMENT?
     ;
 
 val: ':'^ ID;
@@ -31,11 +31,11 @@ ref: '"'^ ID;
 // -- LOGIC CONTROL --
 
 if_
-    : 'if' expression '[' statement* ']'
+    : 'if'^ expression '['! statement* ']'!
     ;
     
 while_
-    : 'while' '[' expression ']' '[' statement* ']'
+    : 'while'^ '['! expression ']'! '['! statement* ']'!
     ;
 
 // -- COMMANDS --
@@ -50,6 +50,7 @@ print
 // -- EXPRESSIONS --
 term
     : val
+    | ref
     | '('! expression ')'!
     | NUMBER
     ; 
