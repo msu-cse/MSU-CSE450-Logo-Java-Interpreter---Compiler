@@ -1,11 +1,16 @@
 package edu.msu.cse.cse450;
 
 import org.antlr.runtime.*;
+import org.antlr.runtime.tree.CommonTree;
 
 public class Test {
     public static void main(String[] args) throws Exception {
         // create a CharStream that reads from standard input
-        ANTLRInputStream input = new ANTLRInputStream(System.in);
+    	ANTLRStringStream input;
+    	if(args.length > 0)
+    		input = new ANTLRStringStream(args[0]);
+    	else
+    		input = new ANTLRInputStream(System.in);
 
         // create a lexer that feeds off of input CharStream
         LogoTokensLexer lexer = new LogoTokensLexer(input);
@@ -16,15 +21,10 @@ public class Test {
         // create a parser that feeds off the tokens buffer
         LogoTokensParser parser = new LogoTokensParser(tokens);
         
-        // begin parsing at rule program
-        parser.program();
+        // begin parsing at rule program, get tree
+        RuleReturnScope scope = parser.program();
+        CommonTree tree = (CommonTree) scope.getTree();
         
-        System.out.println("COMMANDS:       " + lexer.commandCount);
-        System.out.println("IDS:            " + lexer.idCount);
-        System.out.println("NUMBERS:        " + lexer.numberCount);
-        System.out.println("MATHOPS:        " + lexer.mathopCount);
-        System.out.println("REFOPS:         " + lexer.refopCount);
-        System.out.println("NEWLINES:       " + lexer.newlineCount);
-        System.out.println("COMMENTS:       " + lexer.commentCount);
+        System.out.println("Original tree: "+tree.toStringTree()); // print the tree
     }
 }

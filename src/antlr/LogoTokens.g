@@ -1,6 +1,7 @@
 /* Authors: Zach Riggle (zach@riggle.me), Brandon Overall (overallb@msu.edu), Kole Reece (reecekol@msu.edu) */
 grammar LogoTokens;
-/* Character Patterns */
+options {output=AST;}
+tokens { NIL; }
 
 @lexer::header{ package edu.msu.cse.cse450; } 
 @header{ package edu.msu.cse.cse450; }
@@ -16,61 +17,70 @@ grammar LogoTokens;
 
 }
 
-
 program 
     : (statement|NEWLINE)+
     ;
 
 statement
-    : (expression|make|print) COMMENT? NEWLINE
+    : (expression|make|print|while_|if_) COMMENT? NEWLINE
     ;
 
-val: ':' ID;
-ref: '"' ID;
+val: ':'^ ID;
+ref: '"'^ ID;
 
+// -- LOGIC CONTROL --
+
+if_
+    : 'if' expression '[' statement* ']'
+    ;
+    
+while_
+    : 'while' '[' expression ']' '[' statement* ']'
+    ;
+
+// -- COMMANDS --
 make
-    : 'make' ref expression
+    : 'make'^ ref expression
     ;
 
 print
-    : 'print' expression
+    : 'print'^ expression
     ;
 
+// -- EXPRESSIONS --
 term
     : val
-    | '(' expression ')'
+    | '(' expression ')' -> ^(expression)
     | NUMBER
     ; 
 
 negation
-    : 'not'* term
+    : ('not'^)* term
     ;
     
 unary
-    : ('+'|'-')* negation
+    // : ('+'^|'-'^)* negation // Ignore this for now.
+    : negation  
     ;
 
 mult
-    : unary (('*'|'/'|'%') unary)*
+    : unary (('*'|'/'|'%')^ unary)* 
     ;
 
 add
-    : mult (('+'|'-') mult)*
+    : mult (('+'|'-')^ mult)*
     ;
 
 equality
-    : add (( '<' | '>' | '==' | '!=' | '<=' | '>=' ) add)*
+    : add (( '<' | '>' | '==' | '!=' | '<=' | '>=' )^ add)*
     ;
 
 expression
-    : equality (('and'|'or') equality)*
+    : equality (('and'|'or')^ equality)*
     ;
 
 fragment ALPHA : ('a'..'z'|'A'..'Z');
 fragment DIGIT : '0'..'9';
-
-COMMAND 
-      : ('print'|'make') { commandCount++; };
 
 ID    : (ALPHA|'_') (ALPHA|DIGIT|'_')* { idCount++; };
 
