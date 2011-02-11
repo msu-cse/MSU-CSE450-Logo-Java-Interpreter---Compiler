@@ -1,7 +1,42 @@
 /* Authors: Zach Riggle (zach@riggle.me), Brandon Overall (overallb@msu.edu), Kole Reece (reecekol@msu.edu) */
 grammar LogoTokens;
-options {output=AST;}
-tokens { NIL; }
+options {
+  output=AST;
+  ASTLabelType=CommonTree; // type of $stat.tree ref etc...
+}
+
+tokens { 
+// -- Invisible
+  NIL;
+  BLOCK;
+
+// -- Math
+  PLUS='+';
+  MINUS='-';
+  MULT='*';
+  DIV='/';
+  
+// -- Commands
+  MODULO='modulo';
+  PRINT='print';
+  MAKE='make';
+  
+// -- Logic
+  WHILE='while';
+  IF='if';
+  ELSE='else';
+  IFELSE='ifelse';
+  AND='and';
+  OR='or';
+  NOT='not';
+  
+// -- Comparison
+  EQ='==';
+  LT='<';
+  GT='>';
+  LTE='<=';
+  GTE='>=';
+}
 
 @lexer::header{ package edu.msu.cse.cse450; } 
 @header{ package edu.msu.cse.cse450; }
@@ -22,32 +57,61 @@ program
     ;
 
 statement
-    : (expression|make|print|while_|if_) COMMENT?
+    : (expression
+        | make
+        | print
+        | while_
+        | if_
+        | ifelse_ ) COMMENT?
     ;
+
 
 val: ':'^ ID;
 ref: '"'^ ID;
 
-// -- LOGIC CONTROL --
+/******************************
+ *       LOGIC CONTROL
+ ******************************/
 
 if_
-    : 'if'^ expression '['! statement* ']'!
+    : 'if'^ expression block else_*
+    ;
+
+else_
+    : 'else'^ ('if' expression)? block
     ;
     
 while_
-    : 'while'^ '['! expression ']'! '['! statement* ']'!
+    : 'while'^ '['! expression ']'! block
     ;
 
-// -- COMMANDS --
+ifelse_
+    : 'ifelse'^ expression iftrue=block iffalse=block
+    ;
+
+/******************************
+ *       STATEMENT BLOCKS
+ ******************************/
+block
+    : '[' (statement|NEWLINE)+ ']' -> ^(BLOCK statement+)
+    ;
+
+/******************************
+ *       COMMANDS
+ ******************************/
 make
     : 'make'^ ref expression
     ;
 
 print
-    : 'print'^ expression
+    : ( 'print'^ expression )             // Single print
+    | ( '('! 'print'^ expression+ ')'! )  // Parenthesized multi-print
     ;
 
-// -- EXPRESSIONS --
+
+/******************************
+ *       EXPRESSIONS
+ ******************************/
 term
     : val
     | ref
@@ -68,18 +132,28 @@ mult
     : unary (('*'|'/'|'%')^ unary)* 
     ;
 
+modulo
+    : ('modulo'^ expression expression)
+    | mult
+    ;
+
 add
-    : mult (('+'|'-')^ mult)*
+    : modulo (('+'|'-')^ modulo)*
     ;
 
 equality
-    : add (( '<' | '>' | '==' | '!=' | '<=' | '>=' )^ add)*
+    : add (( '<' | '>' | '=' | '==' | '<=' | '>=' )^ add)*
     ;
 
 expression
     : equality (('and'|'or')^ equality)*
     ;
 
+
+/******************************
+ *       MISC
+ ******************************/
+ 
 fragment ALPHA : ('a'..'z'|'A'..'Z');
 fragment DIGIT : '0'..'9';
 
