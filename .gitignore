@@ -3,9 +3,9 @@ wiki
 # -- ANTLR ignores --
 output
 grammar.jar
-*LogoTokensLexer.java
-*LogoTokensParser.java
-*LogoTokens.tokens
+*Lexer.java
+*Parser.java
+*.tokens
 # -- ANTLR ignores --
 
 # -- Java ignores --

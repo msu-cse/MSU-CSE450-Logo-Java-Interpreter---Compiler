@@ -3,7 +3,7 @@ package edu.msu.cse.cse450;
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.CommonTree;
 
-public class Test {
+public class InterpLogoAST2 {
     public static void main(String[] args) throws Exception {
         // create a CharStream that reads from standard input
     	ANTLRStringStream input;

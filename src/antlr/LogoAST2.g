@@ -1,5 +1,5 @@
 /* Authors: Zach Riggle (zach@riggle.me), Brandon Overall (overallb@msu.edu), Kole Reece (reecekol@msu.edu) */
-grammar LogoTokens;
+grammar LogoAST2;
 options {
   output=AST;
   ASTLabelType=CommonTree; // type of $stat.tree ref etc...
