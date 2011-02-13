@@ -12,20 +12,23 @@ public class InterpLogoAST2 {
     	else
     		input = new ANTLRInputStream(System.in);
 
-        // create a lexer that feeds off of input CharStream
-        LogoTokensLexer lexer = new LogoTokensLexer(input);
-
-        // create a buffer of tokens pulled from the lexer
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-
-        // create a parser that feeds off the tokens buffer
-        LogoTokensParser parser = new LogoTokensParser(tokens);
-        
-        // begin parsing at rule program, get tree
-        RuleReturnScope scope = parser.program();
-        CommonTree tree = (CommonTree) scope.getTree();
-        
-        System.out.print("AST: ");
-        System.out.println(tree.toStringTree()); // print the tree
+    	
+    	Interpreter x = new Interpreter(input);
+    	
+//        // create a lexer that feeds off of input CharStream
+//        LogoTokensLexer lexer = new LogoTokensLexer(input);
+//
+//        // create a buffer of tokens pulled from the lexer
+//        CommonTokenStream tokens = new CommonTokenStream(lexer);
+//
+//        // create a parser that feeds off the tokens buffer
+//        LogoTokensParser parser = new LogoTokensParser(tokens);
+//        
+//        // begin parsing at rule program, get tree
+//        RuleReturnScope scope = parser.program();
+//        CommonTree tree = (CommonTree) scope.getTree();
+//        
+//        System.out.print("AST: ");
+//        System.out.println(tree.toStringTree()); // print the tree
     }
 }
