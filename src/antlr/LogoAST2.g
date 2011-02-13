@@ -133,8 +133,7 @@ mult
     ;
 
 modulo
-    : ('modulo'^ expression expression)
-    | mult
+    : ('modulo'^ mult)? mult
     ;
 
 add
