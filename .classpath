@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="test/|lib/|src/java/|src/antlr/|src/" kind="src" path=""/>
+	<classpathentry excluding="test/|lib/|src/java/|src/antlr/|src/|build/|wiki/" kind="src" path=""/>
 	<classpathentry kind="src" path="src/java"/>
 	<classpathentry kind="src" path="src/antlr"/>
 	<classpathentry kind="lib" path="lib/antlr-3.3-complete.jar"/>
