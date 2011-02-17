@@ -26,7 +26,6 @@ Please see the [wiki](msu-cse450-ss11/wiki).
     
         ant run < test/complex_test.txt
     *(or `java -jar build/grammar.jar < test/complex_test.txt`)*
-    
     *(or `java -cp build/grammar.jar edu.msu.cse.cse450.InterpLogoAST2 < test/complex_test.txt`)*
 -   Run the grammar, ***and*** verify against expected results:
 
