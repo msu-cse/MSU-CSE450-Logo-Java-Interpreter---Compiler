@@ -1,0 +1,32 @@
+; Test file for Zach's contribution to Project 3
+;
+; When running this...
+;	ant run < test/zach_test.txt
+; (or)
+; 	java -jar build/grammar.jar < test/zach_test.txt
+; (or)
+;	./run-grammar.sh < test/zach_test.txt
+;
+; The output should be...
+;	1
+;	x is nonzero
+;	x is zero
+
+make "x 1
+
+; ZERO.equals(1) is false, so this will execute the first time.
+while [ :x ] [
+	; Print the value of X
+	print :x
+	
+	; Print whether x is zero or not
+	ifelse :x [ (print "x "is "nonzero) ] [ (print "x "is "zero) ]
+	
+	; Make X zero.  This will cause the loop to exit.
+	make "x 0
+	
+	; Again, print it.
+	ifelse :x [ (print "x "is "nonzero) ] [ (print "x "is "zero) ]
+	
+	; Note that the last line MUST (!!!!) have a blank after it, or all hell breaks loose 
+]

@@ -36,6 +36,10 @@ tokens {
   GT='>';
   LTE='<=';
   GTE='>=';
+
+// -- References
+  BYVAL=':';
+  BYNAME='"';
 }
 
 @lexer::header{ package edu.msu.cse.cse450; } 
@@ -113,10 +117,10 @@ print
  *       EXPRESSIONS
  ******************************/
 term
-    : val
+    : (val
     | ref
     | '('! expression ')'!
-    | NUMBER
+    | NUMBER)^
     ; 
 
 negation

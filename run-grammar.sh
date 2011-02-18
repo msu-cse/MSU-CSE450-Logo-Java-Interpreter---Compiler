@@ -1,1 +1,1 @@
-java -jar grammar.jar
+java -jar build/grammar.jar
