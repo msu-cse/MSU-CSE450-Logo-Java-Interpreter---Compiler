@@ -57,4 +57,75 @@ public class Interpreter {
 	}
 	
 	
+	Object print(CommonTree t) {
+		
+		return 0;
+		
+	}
+	Object if_(CommonTree t) {
+		
+		return 0;
+		
+	}
+	Object ifelse(CommonTree t) {
+		
+		return 0;
+		
+	}
+	Object while_(CommonTree t) {
+		
+		return 0;
+		
+	}
+	Object block(CommonTree t) {
+		
+		return 0;
+		
+	}
+	Object make(CommonTree t) {
+		
+		return 0;
+		
+	}
+	Object term(CommonTree t) {
+		
+		return 0;
+		
+	}
+	Object negate(CommonTree t) {
+		
+		return 0;
+		
+	}
+	Object unary(CommonTree t) {
+		
+		return 0;
+		
+	}
+	Object mult(CommonTree t) {
+		
+		return 0;
+		
+	}
+	Object modulu(CommonTree t) {
+		
+		return 0;
+		
+	}
+	Object add(CommonTree t) {
+		
+		return 0;
+		
+	}
+	Object equality(CommonTree t) {
+		
+		return 0;
+		
+	}
+	Object expression(CommonTree t) {
+		
+		return 0;
+		
+	}
+	
 }
