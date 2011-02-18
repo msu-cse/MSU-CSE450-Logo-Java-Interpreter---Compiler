@@ -41,10 +41,10 @@ public class Interpreter {
 		exec(t);
 	}
 	
-	void exec(CommonTree t) {
+	Object exec(CommonTree t) {
 		
 		log.info( "Parsing tree " + t.toStringTree() );
-		return;
+		return null;
 		/*
 		try {
 			switch (t.getType()) {
@@ -58,7 +58,6 @@ public class Interpreter {
 	
 	
 	Object print(CommonTree t) {
-		
 		return 0;
 		
 	}
