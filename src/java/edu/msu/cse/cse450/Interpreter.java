@@ -1,5 +1,8 @@
 package edu.msu.cse.cse450;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Logger;
@@ -34,8 +37,8 @@ public class Interpreter {
 		 * @author riggleza
 		 */
 		class TreeIterator implements Iterator<Tree> {
-			private Tree t;
-			private Integer current = -1;
+			Tree t;
+			Integer current = -1;
 
 			public TreeIterator(Tree t) {
 				this.t = t;
@@ -57,7 +60,7 @@ public class Interpreter {
 			}
 		}
 
-		private Tree t;
+		Tree t;
 
 		public IterableTree(Tree t) {
 			this.t = t;
@@ -99,27 +102,25 @@ public class Interpreter {
 	}
 
 	Object exec(Tree t) {
-		log.info("Parsing tree " + t.toStringTree());
-
 		switch (t.getType()) {
 		case 0: // Nil, root of the tree, fall through to 'block'
 		case LogoAST2Parser.BLOCK:
 			return block(t);
 
 		case LogoAST2Parser.AND:
-			unhandledTypeError(t); // &&
+			return and(t); // &&
 		case LogoAST2Parser.BYNAME:
 			return name(t);
 		case LogoAST2Parser.BYVAL:
 			return val(t);
 		case LogoAST2Parser.DIV:
-			unhandledTypeError(t); // /
+			return div(t); // /
 		case LogoAST2Parser.EQ:
-			unhandledTypeError(t); // ==
+			return equality(t); // ==
 		case LogoAST2Parser.GT:
-			unhandledTypeError(t); // >
+			return greaterThan(t); // >
 		case LogoAST2Parser.GTE:
-			unhandledTypeError(t); // >=
+			return greaterThanEquals(t); // >=
 		case LogoAST2Parser.ID:
 			return id(t);
 		case LogoAST2Parser.IF:
@@ -127,25 +128,25 @@ public class Interpreter {
 		case LogoAST2Parser.IFELSE:
 			return ifelse(t);
 		case LogoAST2Parser.LT:
-			unhandledTypeError(t); // <
+			return lessThan(t); // <
 		case LogoAST2Parser.LTE:
-			unhandledTypeError(t); // <=
+			return lessThanEquals(t); // <=
 		case LogoAST2Parser.MAKE:
 			return make(t);
 		case LogoAST2Parser.MINUS:
-			unhandledTypeError(t); // -
+			return minus(t); // -
 		case LogoAST2Parser.MODULO:
-			unhandledTypeError(t); // %
+			return modulo(t); // %
 		case LogoAST2Parser.MULT:
-			unhandledTypeError(t); // *
+			return mult(t); // *
 		case LogoAST2Parser.NOT:
-			unhandledTypeError(t); // !
+			return negate(t); // !
 		case LogoAST2Parser.NUMBER:
 			return Integer.parseInt(t.getText());
 		case LogoAST2Parser.OR:
-			unhandledTypeError(t); // ||
+			return or(t); // ||
 		case LogoAST2Parser.PLUS:
-			unhandledTypeError(t); // +
+			return add(t); // +
 		case LogoAST2Parser.PRINT:
 			return print(t);
 		case LogoAST2Parser.WHILE:
@@ -157,7 +158,64 @@ public class Interpreter {
 		return null;
 	}
 
-	private void unhandledTypeError(Tree t) {
+	Object lessThan(Tree t) {
+		log.info("evaluating " + t.toStringTree());
+
+		return (Integer) exec(t.getChild(0))
+			< (Integer) exec(t.getChild(1));
+	}
+
+	Object lessThanEquals(Tree t) {
+		log.info("evaluating " + t.toStringTree());
+
+		return (Integer) exec(t.getChild(0))
+			<= (Integer) exec(t.getChild(1));
+	}
+
+	Object minus(Tree t) {
+		log.info("subtracting " + t.toStringTree());
+		
+		return (Integer) exec(t.getChild(0))
+			 - (Integer) exec(t.getChild(1));	
+	}
+
+	Object or(Tree t) {
+		log.info("or'ing " + t.toStringTree());
+
+		return (Boolean) exec(t.getChild(0))
+		    || (Boolean) exec(t.getChild(1));
+	}
+
+	Object greaterThan(Tree t) {
+		log.info("evaluating " + t.toStringTree());
+
+		return (Integer) exec(t.getChild(0))
+			 > (Integer) exec(t.getChild(1));
+	}
+	
+	Object greaterThanEquals(Tree t) {
+		log.info("evaluating " + t.toStringTree());
+
+		return (Integer) exec(t.getChild(0))
+			 >= (Integer) exec(t.getChild(1));
+	}
+
+
+	Object div(Tree t) {
+		log.info("dividing " + t.toStringTree());
+		
+		return (Integer) exec(t.getChild(0))
+			 / (Integer) exec(t.getChild(1));	
+	}
+
+	Object and(Tree t) {
+		log.info("and'ing " + t.toStringTree());
+		
+		return (Boolean) exec(t.getChild(0))
+			&& (Boolean) exec(t.getChild(1));
+	}
+
+	void unhandledTypeError(Tree t) {
 		log.severe("Encountered unhandled type " + t.getType() + " ("
 				+ LogoAST2Parser.tokenNames[t.getType()] + ")" + " at \""
 				+ t.getText() + "\"" + " on line " + t.getLine() + ":"
@@ -165,17 +223,17 @@ public class Interpreter {
 		System.exit(1);
 	}
 
-	private String id(Tree t) {
+	String id(Tree t) {
 		return t.getText();
 	}
 
-	private Object name(Tree t) {
+	Object name(Tree t) {
 		String variableName = (String) exec(t.getChild(0));
 		log.info("Encountered variable or string " + variableName);
 		return variableName;
 	}
 
-	private Object val(Tree t) {
+	Object val(Tree t) {
 		String variableName = (String) exec(t.getChild(0));
 		log.info("Fetching value of " + variableName);
 		return memory.get(variableName);
@@ -200,9 +258,15 @@ public class Interpreter {
 	}
 
 	Object if_(Tree t) {
-
-		return 0;
-
+		Object result = exec(t.getChild(0));
+		
+		if(FALSE.equals(result) || ZERO.equals(result))
+			return Boolean.FALSE;
+		
+		else 
+			exec(t.getChild(1));
+		
+		return Boolean.TRUE;
 	}
 
 	Object ifelse(Tree t) {
@@ -215,11 +279,11 @@ public class Interpreter {
 		// Note that false what we test for
 		if (FALSE.equals(result) || ZERO.equals(result)) {
 			exec(iffalse);
+			return Boolean.FALSE;
 		} else {
 			exec(iftrue);
+			return Boolean.TRUE;
 		}
-
-		return null;
 	}
 
 	Object while_(Tree t) {
@@ -271,45 +335,35 @@ public class Interpreter {
 	}
 
 	Object negate(Tree t) {
-
-		return 0;
-
-	}
-
-	Object unary(Tree t) {
-
-		return 0;
-
+		return ! (Boolean) exec(t.getChild(0));
 	}
 
 	Object mult(Tree t) {
-
-		return 0;
-
+		log.info("Multiplying " + t.toStringTree());
+		
+		return (Integer) exec(t.getChild(0)) 
+			 * (Integer) exec(t.getChild(1));
 	}
 
-	Object modulu(Tree t) {
-
-		return 0;
-
+	Object modulo(Tree t) {
+		log.info("Modulo'ing " + t.toStringTree());
+		
+		
+		return (Integer) exec(t.getChild(0)) 
+			 % (Integer) exec(t.getChild(1));
 	}
 
 	Object add(Tree t) {
-
-		return 0;
+		log.info("Adding" + t.toStringTree());
 		
+		return (Integer) exec(t.getChild(0)) 
+		 	 + (Integer) exec(t.getChild(1));
 	}
 
 	Object equality(Tree t) {
-
-		return 0;
-
-	}
-
-	Object expression(Tree t) {
-
-		return 0;
-
+		log.info("and'ing " + t.toStringTree());
+		
+		return exec(t.getChild(0)).equals(exec(t.getChild(1)));	
 	}
 
 }
