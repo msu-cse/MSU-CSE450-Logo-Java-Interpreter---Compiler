@@ -74,7 +74,7 @@ public class Interpreter {
 	}
 
 	/**
-	 * Instantiate the Integererpreter based on an InputStream.
+	 * Instantiate the interpreter based on an InputStream.
 	 * 
 	 * @param in
 	 * @throws Exception
@@ -148,7 +148,7 @@ public class Interpreter {
 		case LogoAST2Parser.PLUS:
 			return add(t); // +
 		case LogoAST2Parser.PRINT:
-			return prInteger(t);
+			return print(t);
 		case LogoAST2Parser.WHILE:
 			return while_(t);
 		default:
@@ -160,23 +160,23 @@ public class Interpreter {
 
 	Object lessThan(Tree t) {
 		log.info("evaluating " + t.toStringTree());
-		Integer x = (Integer) exec(t.getChild(0));
-		Integer y = (Integer) exec(t.getChild(1));
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
 		return x < y;
 	}
 
 	Object lessThanEquals(Tree t) {
 		log.info("evaluating " + t.toStringTree());
-		Integer x = (Integer) exec(t.getChild(0));
-		Integer y = (Integer) exec(t.getChild(1));
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
 		return x <= y;
 	}
 
 	Object minus(Tree t) {
 		log.info("subtracting " + t.toStringTree());
-		Integer x = (Integer) exec(t.getChild(0));
-		Integer y = (Integer) exec(t.getChild(1));
-		Integer z = x - y;
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
+		int z = x - y;
 		return z;	
 	}
 
@@ -189,24 +189,24 @@ public class Interpreter {
 
 	Object greaterThan(Tree t) {
 		log.info("evaluating " + t.toStringTree());
-		Integer x = (Integer) exec(t.getChild(0));
-		Integer y = (Integer) exec(t.getChild(1));
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
 		return x > y;
 	}
 	
 	Object greaterThanEquals(Tree t) {
 		log.info("evaluating " + t.toStringTree());
-		Integer x = (Integer) exec(t.getChild(0));
-		Integer y = (Integer) exec(t.getChild(1));
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
 		return x >= y;
 	}
 
 
 	Object div(Tree t) {
 		log.info("dividing " + t.toStringTree());
-		Integer x = (Integer) exec(t.getChild(0));
-		Integer y = (Integer) exec(t.getChild(1));
-		Integer z = x / y;
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
+		int z = x / y;
 		return z;	
 	}
 
@@ -241,20 +241,20 @@ public class Interpreter {
 		return memory.get(variableName);
 	}
 
-	Object prInteger(Tree t) {
-		log.info("PrIntegering " + t.toStringTree());
+	Object print(Tree t) {
+		log.info("Printing " + t.toStringTree());
 
-		// (prInteger "x "y "z) will prInteger multiple items, so there may be
-		// many children. Only prInteger a space if there are.
+		// (print "x "y "z) will print multiple items, so there may be
+		// many children. Only print a space if there are.
 		String space = t.getChildCount() > 1 ? " " : "";
 
 		for (Tree subtree : new IterableTree(t)) {
-			Object prIntegerValue = exec(subtree);
-			log.info("PrIntegering [" + prIntegerValue + "]");
-			System.out.prInteger(prIntegerValue + space);
+			Object printValue = exec(subtree);
+			log.info("Printing [" + printValue + "]");
+			System.out.print(printValue + space);
 		}
 
-		System.out.prIntegerln();
+		System.out.println();
 
 		return null;
 	}
@@ -343,26 +343,26 @@ public class Interpreter {
 
 	Object mult(Tree t) {
 		log.info("Multiplying " + t.toStringTree());
-		Integer x = (Integer) exec(t.getChild(0));
-		Integer y = (Integer) exec(t.getChild(1));
-		Integer z = x * y;
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
+		int z = x * y;
 		return z;
 	}
 
 	Object modulo(Tree t) {
 		log.info("Modulo'ing " + t.toStringTree());
-		Integer x = (Integer) exec(t.getChild(0));
-		Integer y = (Integer) exec(t.getChild(1));
-		Integer z = x % y;
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
+		int z = x % y;
 		
 		return z;
 	}
 
 	Object add(Tree t) {
 		log.info("Adding" + t.toStringTree());
-		Integer x = (Integer) exec(t.getChild(0));
-		Integer y = (Integer) exec(t.getChild(1));
-		Integer z = x + y;
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
+		int z = x + y;
 		return z;
 	}
 
