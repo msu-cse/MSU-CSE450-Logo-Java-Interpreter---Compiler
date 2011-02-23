@@ -160,59 +160,61 @@ public class Interpreter {
 
 	Object lessThan(Tree t) {
 		log.info("evaluating " + t.toStringTree());
-
-		return (Integer) exec(t.getChild(0))
-			< (Integer) exec(t.getChild(1));
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
+		return x < y;
 	}
 
 	Object lessThanEquals(Tree t) {
 		log.info("evaluating " + t.toStringTree());
-
-		return (Integer) exec(t.getChild(0))
-			<= (Integer) exec(t.getChild(1));
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
+		return x <= y;
 	}
 
 	Object minus(Tree t) {
 		log.info("subtracting " + t.toStringTree());
-		
-		return (Integer) exec(t.getChild(0))
-			 - (Integer) exec(t.getChild(1));	
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
+		int z = x - y;
+		return z;	
 	}
 
 	Object or(Tree t) {
 		log.info("or'ing " + t.toStringTree());
-
-		return (Boolean) exec(t.getChild(0))
-		    || (Boolean) exec(t.getChild(1));
+		Boolean x = (Boolean) exec(t.getChild(0));
+		Boolean y = (Boolean) exec(t.getChild(1));
+		return x || y;
 	}
 
 	Object greaterThan(Tree t) {
 		log.info("evaluating " + t.toStringTree());
-
-		return (Integer) exec(t.getChild(0))
-			 > (Integer) exec(t.getChild(1));
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
+		return x > y;
 	}
 	
 	Object greaterThanEquals(Tree t) {
 		log.info("evaluating " + t.toStringTree());
-
-		return (Integer) exec(t.getChild(0))
-			 >= (Integer) exec(t.getChild(1));
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
+		return x >= y;
 	}
 
 
 	Object div(Tree t) {
 		log.info("dividing " + t.toStringTree());
-		
-		return (Integer) exec(t.getChild(0))
-			 / (Integer) exec(t.getChild(1));	
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
+		int z = x / y;
+		return z;	
 	}
 
 	Object and(Tree t) {
 		log.info("and'ing " + t.toStringTree());
-		
-		return (Boolean) exec(t.getChild(0))
-			&& (Boolean) exec(t.getChild(1));
+		Boolean x = (Boolean) exec(t.getChild(0));
+		Boolean y = (Boolean) exec(t.getChild(1));
+		return x && y;
 	}
 
 	void unhandledTypeError(Tree t) {
@@ -335,29 +337,33 @@ public class Interpreter {
 	}
 
 	Object negate(Tree t) {
-		return ! (Boolean) exec(t.getChild(0));
+		Boolean x = (Boolean) exec(t.getChild(0));
+		return !x ;
 	}
 
 	Object mult(Tree t) {
 		log.info("Multiplying " + t.toStringTree());
-		
-		return (Integer) exec(t.getChild(0)) 
-			 * (Integer) exec(t.getChild(1));
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
+		int z = x * y;
+		return z;
 	}
 
 	Object modulo(Tree t) {
 		log.info("Modulo'ing " + t.toStringTree());
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
+		int z = x % y;
 		
-		
-		return (Integer) exec(t.getChild(0)) 
-			 % (Integer) exec(t.getChild(1));
+		return z;
 	}
 
 	Object add(Tree t) {
 		log.info("Adding" + t.toStringTree());
-		
-		return (Integer) exec(t.getChild(0)) 
-		 	 + (Integer) exec(t.getChild(1));
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
+		int z = x + y;
+		return z;
 	}
 
 	Object equality(Tree t) {
