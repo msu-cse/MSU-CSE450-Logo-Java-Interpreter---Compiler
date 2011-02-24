@@ -23,9 +23,8 @@ Please see the [wiki](msu-cse450-ss11/wiki).
 
 -   Build everything: `ant` *(or build from within Eclipse with the Ant pane)*
 -   Run the grammar: 
-    
-    *(or `java -jar build/grammar.jar < test/complex_test.txt`)*
-    *(or `java -cp build/grammar.jar edu.msu.cse.cse450.InterpLogoAST2 < test/complex_test.txt`)*
+     - `java -jar build/grammar.jar < test/complex_test.txt`
+     - `java -cp build/grammar.jar edu.msu.cse.cse450.InterpLogoAST2 < test/complex_test.txt`
 -   Run the grammar, ***and*** verify against expected results:
 
         diff test/test_X_results.txt <(java -jar build/grammar.jar < test/X_test.txt) && echo "OK"
