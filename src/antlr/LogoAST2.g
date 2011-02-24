@@ -31,11 +31,15 @@ tokens {
   NOT='not';
   
 // -- Comparison
-  EQ='==';
+  EQ='=';
   LT='<';
   GT='>';
   LTE='<=';
   GTE='>=';
+
+// -- References
+  BYVAL=':';
+  BYNAME='"';
 }
 
 @lexer::header{ package edu.msu.cse.cse450; } 
@@ -86,7 +90,7 @@ while_
     ;
 
 ifelse_
-    : 'ifelse'^ expression iftrue=block iffalse=block
+    : 'ifelse'^ expression iftrue=block (NEWLINE?)! iffalse=block
     ;
 
 /******************************
@@ -113,19 +117,15 @@ print
  *       EXPRESSIONS
  ******************************/
 term
-    : val
+    : (val
     | ref
     | '('! expression ')'!
-    | NUMBER
+    | NUMBER)^
     ; 
-
-negation
-    : ('not'^)* term
-    ;
     
 unary
     // : ('+'^|'-'^)* negation // Ignore this for now.
-    : negation  
+    : term  
     ;
 
 mult
@@ -144,8 +144,12 @@ equality
     : add (( '<' | '>' | '=' | '==' | '<=' | '>=' )^ add)*
     ;
 
-expression
+boolean_
     : equality (('and'|'or')^ equality)*
+    ;
+
+expression
+    : ('not'^)* boolean_
     ;
 
 

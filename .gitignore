@@ -54,3 +54,4 @@ tmtags
 .*.sw[a-z]
 *.un~
 # -- Vi
+log.txt
