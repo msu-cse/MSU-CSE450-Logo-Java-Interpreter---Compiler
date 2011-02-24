@@ -177,7 +177,7 @@ public class Interpreter {
 		int x = (Integer) exec(t.getChild(0));
 		int y = (Integer) exec(t.getChild(1));
 		int z = x - y;
-		return z;	
+		return z;
 	}
 
 	Object or(Tree t) {
@@ -188,12 +188,19 @@ public class Interpreter {
 	}
 
 	Object greaterThan(Tree t) {
-		log.info("evaluating " + t.toStringTree());
-		int x = (Integer) exec(t.getChild(0));
-		int y = (Integer) exec(t.getChild(1));
-		return x > y;
+		Object a = exec((CommonTree) t.getChild(0));
+		Object b = exec((CommonTree) t.getChild(1));
+		if (a instanceof Number && b instanceof Number) {
+
+			Number x = (Number) a;
+			Number y = (Number) b;
+
+			return x.floatValue() > y.floatValue();
+
+		}
+		return false;
 	}
-	
+
 	Object greaterThanEquals(Tree t) {
 		log.info("evaluating " + t.toStringTree());
 		int x = (Integer) exec(t.getChild(0));
@@ -201,13 +208,12 @@ public class Interpreter {
 		return x >= y;
 	}
 
-
 	Object div(Tree t) {
 		log.info("dividing " + t.toStringTree());
 		int x = (Integer) exec(t.getChild(0));
 		int y = (Integer) exec(t.getChild(1));
 		int z = x / y;
-		return z;	
+		return z;
 	}
 
 	Object and(Tree t) {
@@ -261,13 +267,13 @@ public class Interpreter {
 
 	Object if_(Tree t) {
 		Object result = exec(t.getChild(0));
-		
-		if(FALSE.equals(result) || ZERO.equals(result))
+
+		if (FALSE.equals(result) || ZERO.equals(result))
 			return Boolean.FALSE;
-		
-		else 
+
+		else
 			exec(t.getChild(1));
-		
+
 		return Boolean.TRUE;
 	}
 
@@ -338,7 +344,7 @@ public class Interpreter {
 
 	Object negate(Tree t) {
 		Boolean x = (Boolean) exec(t.getChild(0));
-		return !x ;
+		return !x;
 	}
 
 	Object mult(Tree t) {
@@ -354,7 +360,7 @@ public class Interpreter {
 		int x = (Integer) exec(t.getChild(0));
 		int y = (Integer) exec(t.getChild(1));
 		int z = x % y;
-		
+
 		return z;
 	}
 
@@ -368,8 +374,8 @@ public class Interpreter {
 
 	Object equality(Tree t) {
 		log.info("and'ing " + t.toStringTree());
-		
-		return exec(t.getChild(0)).equals(exec(t.getChild(1)));	
+
+		return exec(t.getChild(0)).equals(exec(t.getChild(1)));
 	}
 
 }
