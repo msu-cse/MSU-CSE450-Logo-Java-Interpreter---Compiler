@@ -1,5 +1,3 @@
-package edu.msu.cse.cse450;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

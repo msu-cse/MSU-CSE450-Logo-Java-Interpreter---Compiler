@@ -1,5 +1,3 @@
-package edu.msu.cse.cse450;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.logging.Level;

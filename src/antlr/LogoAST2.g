@@ -42,9 +42,6 @@ tokens {
   BYNAME='"';
 }
 
-@lexer::header{ package edu.msu.cse.cse450; } 
-@header{ package edu.msu.cse.cse450; }
-
 @lexer::members{ 
   public Integer mathopCount = 0;
   public Integer commandCount = 0;
