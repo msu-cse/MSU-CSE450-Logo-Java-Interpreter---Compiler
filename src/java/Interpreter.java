@@ -1,6 +1,3 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Logger;
@@ -11,14 +8,6 @@ import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
 
 public class Interpreter {
-	Logger log = Logger.getLogger("Interpreter");
-
-	HashMap<String, Object> memory = new HashMap<String, Object>();
-
-	// -- Boolean truths
-	public static final Integer ZERO = new Integer(0);
-	public static final Boolean FALSE = new Boolean(false);
-
 	/**
 	 * Implements the {@link Iterable} pattern for {@link Tree}.
 	 * 
@@ -35,8 +24,8 @@ public class Interpreter {
 		 * @author riggleza
 		 */
 		class TreeIterator implements Iterator<Tree> {
-			Tree t;
 			Integer current = -1;
+			Tree t;
 
 			public TreeIterator(Tree t) {
 				this.t = t;
@@ -71,6 +60,14 @@ public class Interpreter {
 
 	}
 
+	public static final Boolean FALSE = new Boolean(false);
+
+	// -- Boolean truths
+	public static final Integer ZERO = new Integer(0);
+	Logger log = Logger.getLogger("Interpreter");
+
+	HashMap<String, Object> memory = new HashMap<String, Object>();
+
 	/**
 	 * Instantiate the interpreter based on an InputStream.
 	 * 
@@ -97,6 +94,44 @@ public class Interpreter {
 
 	public Interpreter(CommonTree t) {
 		exec(t);
+	}
+
+	Object add(Tree t) {
+		log.info("Adding" + t.toStringTree());
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
+		int z = x + y;
+		return z;
+	}
+
+	Object and(Tree t) {
+		log.info("and'ing " + t.toStringTree());
+		Boolean x = (Boolean) exec(t.getChild(0));
+		Boolean y = (Boolean) exec(t.getChild(1));
+		return x && y;
+	}
+
+	Object block(Tree t) {
+		log.info("Executing block" + t.toStringTree());
+
+		for (Tree child : new IterableTree(t))
+			exec(child);
+
+		return null;
+	}
+
+	Object div(Tree t) {
+		log.info("dividing " + t.toStringTree());
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
+		int z = x / y;
+		return z;
+	}
+
+	Object equality(Tree t) {
+		log.info("and'ing " + t.toStringTree());
+
+		return exec(t.getChild(0)).equals(exec(t.getChild(1)));
 	}
 
 	Object exec(Tree t) {
@@ -156,38 +191,9 @@ public class Interpreter {
 		return null;
 	}
 
-	Object lessThan(Tree t) {
-		log.info("evaluating " + t.toStringTree());
-		int x = (Integer) exec(t.getChild(0));
-		int y = (Integer) exec(t.getChild(1));
-		return x < y;
-	}
-
-	Object lessThanEquals(Tree t) {
-		log.info("evaluating " + t.toStringTree());
-		int x = (Integer) exec(t.getChild(0));
-		int y = (Integer) exec(t.getChild(1));
-		return x <= y;
-	}
-
-	Object minus(Tree t) {
-		log.info("subtracting " + t.toStringTree());
-		int x = (Integer) exec(t.getChild(0));
-		int y = (Integer) exec(t.getChild(1));
-		int z = x - y;
-		return z;
-	}
-
-	Object or(Tree t) {
-		log.info("or'ing " + t.toStringTree());
-		Boolean x = (Boolean) exec(t.getChild(0));
-		Boolean y = (Boolean) exec(t.getChild(1));
-		return x || y;
-	}
-
 	Object greaterThan(Tree t) {
-		Object a = exec((CommonTree) t.getChild(0));
-		Object b = exec((CommonTree) t.getChild(1));
+		Object a = exec(t.getChild(0));
+		Object b = exec(t.getChild(1));
 		if (a instanceof Number && b instanceof Number) {
 
 			Number x = (Number) a;
@@ -206,61 +212,8 @@ public class Interpreter {
 		return x >= y;
 	}
 
-	Object div(Tree t) {
-		log.info("dividing " + t.toStringTree());
-		int x = (Integer) exec(t.getChild(0));
-		int y = (Integer) exec(t.getChild(1));
-		int z = x / y;
-		return z;
-	}
-
-	Object and(Tree t) {
-		log.info("and'ing " + t.toStringTree());
-		Boolean x = (Boolean) exec(t.getChild(0));
-		Boolean y = (Boolean) exec(t.getChild(1));
-		return x && y;
-	}
-
-	void unhandledTypeError(Tree t) {
-		log.severe("Encountered unhandled type " + t.getType() + " ("
-				+ LogoAST2Parser.tokenNames[t.getType()] + ")" + " at \""
-				+ t.getText() + "\"" + " on line " + t.getLine() + ":"
-				+ t.getCharPositionInLine());
-		System.exit(1);
-	}
-
 	String id(Tree t) {
 		return t.getText();
-	}
-
-	Object name(Tree t) {
-		String variableName = (String) exec(t.getChild(0));
-		log.info("Encountered variable or string " + variableName);
-		return variableName;
-	}
-
-	Object val(Tree t) {
-		String variableName = (String) exec(t.getChild(0));
-		log.info("Fetching value of " + variableName);
-		return memory.get(variableName);
-	}
-
-	Object print(Tree t) {
-		log.info("Printing " + t.toStringTree());
-
-		// (print "x "y "z) will print multiple items, so there may be
-		// many children. Only print a space if there are.
-		String space = t.getChildCount() > 1 ? " " : "";
-
-		for (Tree subtree : new IterableTree(t)) {
-			Object printValue = exec(subtree);
-			log.info("Printing [" + printValue + "]");
-			System.out.print(printValue + space);
-		}
-
-		System.out.println();
-
-		return null;
 	}
 
 	Object if_(Tree t) {
@@ -292,6 +245,106 @@ public class Interpreter {
 		}
 	}
 
+	Object lessThan(Tree t) {
+		log.info("evaluating " + t.toStringTree());
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
+		return x < y;
+	}
+
+	Object lessThanEquals(Tree t) {
+		log.info("evaluating " + t.toStringTree());
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
+		return x <= y;
+	}
+
+	Object make(Tree t) {
+		String key = exec(t.getChild(0)).toString();
+		Object value = exec(t.getChild(1));
+
+		log.info("Setting " + key + " = " + value);
+
+		memory.put(key, value);
+
+		return value;
+	}
+
+	Object minus(Tree t) {
+		log.info("subtracting " + t.toStringTree());
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
+		int z = x - y;
+		return z;
+	}
+
+	Object modulo(Tree t) {
+		log.info("Modulo'ing " + t.toStringTree());
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
+		int z = x % y;
+
+		return z;
+	}
+
+	Object mult(Tree t) {
+		log.info("Multiplying " + t.toStringTree());
+		int x = (Integer) exec(t.getChild(0));
+		int y = (Integer) exec(t.getChild(1));
+		int z = x * y;
+		return z;
+	}
+
+	Object name(Tree t) {
+		String variableName = (String) exec(t.getChild(0));
+		log.info("Encountered variable or string " + variableName);
+		return variableName;
+	}
+
+	Object negate(Tree t) {
+		Boolean x = (Boolean) exec(t.getChild(0));
+		return !x;
+	}
+
+	Object or(Tree t) {
+		log.info("or'ing " + t.toStringTree());
+		Boolean x = (Boolean) exec(t.getChild(0));
+		Boolean y = (Boolean) exec(t.getChild(1));
+		return x || y;
+	}
+
+	Object print(Tree t) {
+		log.info("Printing " + t.toStringTree());
+
+		// (print "x "y "z) will print multiple items, so there may be
+		// many children. Only print a space if there are.
+		String space = t.getChildCount() > 1 ? " " : "";
+
+		for (Tree subtree : new IterableTree(t)) {
+			Object printValue = exec(subtree);
+			log.info("Printing [" + printValue + "]");
+			System.out.print(printValue + space);
+		}
+
+		System.out.println();
+
+		return null;
+	}
+
+	void unhandledTypeError(Tree t) {
+		log.severe("Encountered unhandled type " + t.getType() + " ("
+				+ LogoAST2Parser.tokenNames[t.getType()] + ")" + " at \""
+				+ t.getText() + "\"" + " on line " + t.getLine() + ":"
+				+ t.getCharPositionInLine());
+		System.exit(1);
+	}
+
+	Object val(Tree t) {
+		String variableName = (String) exec(t.getChild(0));
+		log.info("Fetching value of " + variableName);
+		return memory.get(variableName);
+	}
+
 	Object while_(Tree t) {
 		Tree condition = t.getChild(0);
 		Tree block = t.getChild(1);
@@ -318,62 +371,6 @@ public class Interpreter {
 		}
 
 		return null;
-	}
-
-	Object block(Tree t) {
-		log.info("Executing block" + t.toStringTree());
-
-		for (Tree child : new IterableTree(t))
-			exec(child);
-
-		return null;
-	}
-
-	Object make(Tree t) {
-		String key = exec(t.getChild(0)).toString();
-		Object value = exec(t.getChild(1));
-
-		log.info("Setting " + key + " = " + value);
-
-		memory.put(key, value);
-
-		return value;
-	}
-
-	Object negate(Tree t) {
-		Boolean x = (Boolean) exec(t.getChild(0));
-		return !x;
-	}
-
-	Object mult(Tree t) {
-		log.info("Multiplying " + t.toStringTree());
-		int x = (Integer) exec(t.getChild(0));
-		int y = (Integer) exec(t.getChild(1));
-		int z = x * y;
-		return z;
-	}
-
-	Object modulo(Tree t) {
-		log.info("Modulo'ing " + t.toStringTree());
-		int x = (Integer) exec(t.getChild(0));
-		int y = (Integer) exec(t.getChild(1));
-		int z = x % y;
-
-		return z;
-	}
-
-	Object add(Tree t) {
-		log.info("Adding" + t.toStringTree());
-		int x = (Integer) exec(t.getChild(0));
-		int y = (Integer) exec(t.getChild(1));
-		int z = x + y;
-		return z;
-	}
-
-	Object equality(Tree t) {
-		log.info("and'ing " + t.toStringTree());
-
-		return exec(t.getChild(0)).equals(exec(t.getChild(1)));
 	}
 
 }

@@ -2,10 +2,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
-import org.antlr.runtime.*;
-import org.antlr.runtime.tree.CommonTree;
+import org.antlr.runtime.ANTLRInputStream;
+import org.antlr.runtime.ANTLRStringStream;
 
 public class InterpLogoAST2 {
 
