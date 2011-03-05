@@ -46,6 +46,7 @@
 				<attribute name="Class-Path" value="." />
 			</manifest>
 			<zipfileset excludes="META-INF/*.SF" src="${antlr.lib}" />
+            <zipfileset excludes="META-INF/*.SF" src="${turtle.lib}" />
 		</jar>
 	</target>
 

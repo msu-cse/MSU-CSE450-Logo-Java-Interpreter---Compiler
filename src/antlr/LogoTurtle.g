@@ -29,6 +29,7 @@ tokens {
   AND='and';
   OR='or';
   NOT='not';
+  REPEAT='repeat';
   
 // -- Comparison
   EQ='=';
@@ -81,7 +82,9 @@ statement
         | print
         | while_
         | if_
-        | ifelse_ ) COMMENT?
+        | ifelse_
+        | repeat 
+        | turtle ) COMMENT?
     ;
 
 
@@ -106,6 +109,10 @@ while_
 
 ifelse_
     : 'ifelse'^ expression iftrue=block (NEWLINE?)! iffalse=block
+    ;
+
+repeat // 'repeat' is not a class-requried statement, but is nice to have
+    : 'repeat'^ expression block
     ;
 
 /******************************
@@ -171,6 +178,17 @@ expression
 /******************************
  *       TURTLE GRAPHICS
  ******************************/
+turtle: ( penup
+          | pendown
+          | forward
+          | backward
+          | left
+          | right
+          | setpos
+          | circle
+          | color
+          | beginfill
+          | endfill );
 penup:      'penup'^;
 pendown:    'pendown'^;
 forward:    ('forward'|'fd')^       expression;

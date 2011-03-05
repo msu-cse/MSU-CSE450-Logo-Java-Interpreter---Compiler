@@ -1,0 +1,2 @@
+; Borrowed from Wikipedia
+repeat 4 [fd 100 left 90]

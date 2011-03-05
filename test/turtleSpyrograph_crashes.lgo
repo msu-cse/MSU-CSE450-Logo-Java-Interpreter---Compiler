@@ -1,0 +1,6 @@
+; Borrowed from Wikipedia
+; Our turtle-drawing engine really doesn't like the spyrograph, and
+; usually crashes when it runs this.
+repeat 10[ rt 10 repeat 90 [fd 4 rt 4]]
+fd 25
+rt 90

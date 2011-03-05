@@ -1,0 +1,11 @@
+; Borrowed from Wikipedia
+fd 20    ; drawing a line and moving
+penup    ; lifting the pen so it will not draw anything
+fd 20    ; moving but not drawing
+pendown  ; lowering the pen so it draws again
+fd 20    ; drawing a line and moving
+penup    ; lifting the pen so it will not draw anything
+fd 40    ; moving but not drawing
+pendown  ; lowering the pen so it draws again
+rt 20    ; rotating right (clockwise) 20 degrees
+
