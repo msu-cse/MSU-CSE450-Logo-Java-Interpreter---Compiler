@@ -6,7 +6,7 @@ import java.util.logging.LogManager;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.ANTLRStringStream;
 
-public class InterpLogoAST2 {
+public class InterpLogoTurtle {
 
 	public static File loggingConfigFile = new File("logging.properties");
 

@@ -76,12 +76,12 @@ public class Interpreter {
 	 */
 	public Interpreter(ANTLRStringStream in) throws Exception {
 		// -- Parse the inpiut
-		LogoAST2Lexer lexer = new LogoAST2Lexer(in);
+		LogoTurtleLexer lexer = new LogoTurtleLexer(in);
 		TokenRewriteStream tokens = new TokenRewriteStream(lexer);
-		LogoAST2Parser parser = new LogoAST2Parser(tokens);
+		LogoTurtleParser parser = new LogoTurtleParser(tokens);
 
 		// -- 'program' is the top-level rule
-		LogoAST2Parser.program_return r = parser.program();
+		LogoTurtleParser.program_return r = parser.program();
 
 		// -- Check for errors
 		if (parser.getNumberOfSyntaxErrors() != 0)
@@ -137,52 +137,52 @@ public class Interpreter {
 	Object exec(Tree t) {
 		switch (t.getType()) {
 		case 0: // Nil, root of the tree, fall through to 'block'
-		case LogoAST2Parser.BLOCK:
+		case LogoTurtleParser.BLOCK:
 			return block(t);
 
-		case LogoAST2Parser.AND:
+		case LogoTurtleParser.AND:
 			return and(t); // &&
-		case LogoAST2Parser.BYNAME:
+		case LogoTurtleParser.BYNAME:
 			return name(t);
-		case LogoAST2Parser.BYVAL:
+		case LogoTurtleParser.BYVAL:
 			return val(t);
-		case LogoAST2Parser.DIV:
+		case LogoTurtleParser.DIV:
 			return div(t); // /
-		case LogoAST2Parser.EQ:
+		case LogoTurtleParser.EQ:
 			return equality(t); // ==
-		case LogoAST2Parser.GT:
+		case LogoTurtleParser.GT:
 			return greaterThan(t); // >
-		case LogoAST2Parser.GTE:
+		case LogoTurtleParser.GTE:
 			return greaterThanEquals(t); // >=
-		case LogoAST2Parser.ID:
+		case LogoTurtleParser.ID:
 			return id(t);
-		case LogoAST2Parser.IF:
+		case LogoTurtleParser.IF:
 			unhandledTypeError(t);
-		case LogoAST2Parser.IFELSE:
+		case LogoTurtleParser.IFELSE:
 			return ifelse(t);
-		case LogoAST2Parser.LT:
+		case LogoTurtleParser.LT:
 			return lessThan(t); // <
-		case LogoAST2Parser.LTE:
+		case LogoTurtleParser.LTE:
 			return lessThanEquals(t); // <=
-		case LogoAST2Parser.MAKE:
+		case LogoTurtleParser.MAKE:
 			return make(t);
-		case LogoAST2Parser.MINUS:
+		case LogoTurtleParser.MINUS:
 			return minus(t); // -
-		case LogoAST2Parser.MODULO:
+		case LogoTurtleParser.MODULO:
 			return modulo(t); // %
-		case LogoAST2Parser.MULT:
+		case LogoTurtleParser.MULT:
 			return mult(t); // *
-		case LogoAST2Parser.NOT:
+		case LogoTurtleParser.NOT:
 			return negate(t); // !
-		case LogoAST2Parser.NUMBER:
+		case LogoTurtleParser.NUMBER:
 			return Integer.parseInt(t.getText());
-		case LogoAST2Parser.OR:
+		case LogoTurtleParser.OR:
 			return or(t); // ||
-		case LogoAST2Parser.PLUS:
+		case LogoTurtleParser.PLUS:
 			return add(t); // +
-		case LogoAST2Parser.PRINT:
+		case LogoTurtleParser.PRINT:
 			return print(t);
-		case LogoAST2Parser.WHILE:
+		case LogoTurtleParser.WHILE:
 			return while_(t);
 		default:
 			unhandledTypeError(t);
@@ -333,7 +333,7 @@ public class Interpreter {
 
 	void unhandledTypeError(Tree t) {
 		log.severe("Encountered unhandled type " + t.getType() + " ("
-				+ LogoAST2Parser.tokenNames[t.getType()] + ")" + " at \""
+				+ LogoTurtleParser.tokenNames[t.getType()] + ")" + " at \""
 				+ t.getText() + "\"" + " on line " + t.getLine() + ":"
 				+ t.getCharPositionInLine());
 		System.exit(1);
