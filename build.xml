@@ -33,7 +33,7 @@
 	</target>
 
 	<target name="compile">
-		<javac destdir="${build.dir}/${src.java}" srcdir="src/java" classpath="${antlr.lib}" includeantruntime="false" />
+		<javac destdir="${build.dir}/${src.java}" srcdir="src/java" classpath="${antlr.lib}:${turtle.lib}" includeantruntime="false" />
 	</target>
 	
 	<target name="create_run_jar" depends="prepare,build_grammar_src,compile">

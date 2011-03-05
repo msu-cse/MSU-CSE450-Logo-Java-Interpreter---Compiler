@@ -40,6 +40,24 @@ tokens {
 // -- References
   BYVAL=':';
   BYNAME='"';
+  
+// -- Turtle
+  PENUP='penup';
+  PENDOWN='pendown';
+  FORWARD='forward';
+  FORWARD2='fd';
+  BACKWARD='back';
+  BACKWARD2='bk';
+  LEFT='left';
+  LEFT2='lt';
+  RIGHT='right';
+  RIGHT2='rt';
+  SETHEADING='setheading';
+  SETHEADING2='seth';
+  CIRCLE='circle';
+  COLOR='setpencolor';
+  BEGINFILL='beginfill';
+  ENDFILL='endfill';
 }
 
 @lexer::members{ 
@@ -149,6 +167,22 @@ expression
     : ('not'^)* boolean_
     ;
 
+
+/******************************
+ *       TURTLE GRAPHICS
+ ******************************/
+penup:      'penup'^;
+pendown:    'pendown'^;
+forward:    ('forward'|'fd')^       expression;
+backward:   ('back'|'bk')^          expression;
+left:       ('left'|'lt')^          expression;
+right:      ('right'|'rt')^         expression;
+heading:    ('setheading'|'seth')^  expression;
+setpos:     'setpos'^               expression expression;
+circle:     'circle'                expression;
+color:      'setpencolor'^          expression ',' expression ',' expression;
+beginfill:  'beginfill';
+endfill:    'endfill';
 
 /******************************
  *       MISC

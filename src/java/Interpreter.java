@@ -111,6 +111,16 @@ public class Interpreter {
 		return x && y;
 	}
 
+	private Object backward(Tree t) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private Object beginFill(Tree t) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	Object block(Tree t) {
 		log.info("Executing block" + t.toStringTree());
 
@@ -120,12 +130,22 @@ public class Interpreter {
 		return null;
 	}
 
+	private Object circle(Tree t) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	Object div(Tree t) {
 		log.info("dividing " + t.toStringTree());
 		int x = (Integer) exec(t.getChild(0));
 		int y = (Integer) exec(t.getChild(1));
 		int z = x / y;
 		return z;
+	}
+
+	private Object endFill(Tree t) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	Object equality(Tree t) {
@@ -142,14 +162,28 @@ public class Interpreter {
 
 		case LogoTurtleParser.AND:
 			return and(t); // &&
+		case LogoTurtleParser.BACKWARD:
+		case LogoTurtleParser.BACKWARD2:
+			return backward(t);
+		case LogoTurtleParser.BEGINFILL:
+			return beginFill(t);
 		case LogoTurtleParser.BYNAME:
 			return name(t);
 		case LogoTurtleParser.BYVAL:
 			return val(t);
+		case LogoTurtleParser.CIRCLE:
+			return circle(t);
+		case LogoTurtleParser.COLOR:
+			return setPenColor(t);
 		case LogoTurtleParser.DIV:
 			return div(t); // /
+		case LogoTurtleParser.ENDFILL:
+			return endFill(t);
 		case LogoTurtleParser.EQ:
 			return equality(t); // ==
+		case LogoTurtleParser.FORWARD:
+		case LogoTurtleParser.FORWARD2:
+			return backward(t);
 		case LogoTurtleParser.GT:
 			return greaterThan(t); // >
 		case LogoTurtleParser.GTE:
@@ -160,6 +194,9 @@ public class Interpreter {
 			unhandledTypeError(t);
 		case LogoTurtleParser.IFELSE:
 			return ifelse(t);
+		case LogoTurtleParser.LEFT:
+		case LogoTurtleParser.LEFT2:
+			return left(t);
 		case LogoTurtleParser.LT:
 			return lessThan(t); // <
 		case LogoTurtleParser.LTE:
@@ -178,10 +215,20 @@ public class Interpreter {
 			return Integer.parseInt(t.getText());
 		case LogoTurtleParser.OR:
 			return or(t); // ||
+		case LogoTurtleParser.PENDOWN:
+			return penDown(t);
+		case LogoTurtleParser.PENUP:
+			return penUp(t);
 		case LogoTurtleParser.PLUS:
 			return add(t); // +
 		case LogoTurtleParser.PRINT:
 			return print(t);
+		case LogoTurtleParser.RIGHT:
+		case LogoTurtleParser.RIGHT2:
+			return right(t);
+		case LogoTurtleParser.SETHEADING:
+		case LogoTurtleParser.SETHEADING2:
+			return setHeading(t);
 		case LogoTurtleParser.WHILE:
 			return while_(t);
 		default:
@@ -243,6 +290,11 @@ public class Interpreter {
 			exec(iftrue);
 			return Boolean.TRUE;
 		}
+	}
+
+	private Object left(Tree t) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	Object lessThan(Tree t) {
@@ -313,6 +365,16 @@ public class Interpreter {
 		return x || y;
 	}
 
+	private Object penDown(Tree t) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private Object penUp(Tree t) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	Object print(Tree t) {
 		log.info("Printing " + t.toStringTree());
 
@@ -328,6 +390,21 @@ public class Interpreter {
 
 		System.out.println();
 
+		return null;
+	}
+
+	private Object right(Tree t) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private Object setHeading(Tree t) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private Object setPenColor(Tree t) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
