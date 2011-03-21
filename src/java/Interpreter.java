@@ -1,5 +1,6 @@
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Stack;
 import java.util.logging.Logger;
 
 import org.antlr.runtime.ANTLRStringStream;
@@ -8,65 +9,12 @@ import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
 
 public class Interpreter {
-	/**
-	 * Implements the {@link Iterable} pattern for {@link Tree}.
-	 * 
-	 * @note This class would normally be in a completely separate file, but we
-	 *       can only turn in specific files for the project.
-	 * 
-	 * @author riggleza
-	 */
-	class IterableTree implements Iterable<Tree> {
-
-		/**
-		 * Implements the {@link Iterator} pattern for {@link Tree}.
-		 * 
-		 * @author riggleza
-		 */
-		class TreeIterator implements Iterator<Tree> {
-			Integer current = -1;
-			Tree t;
-
-			public TreeIterator(Tree t) {
-				this.t = t;
-			}
-
-			@Override
-			public boolean hasNext() {
-				return (current + 1) < t.getChildCount();
-			}
-
-			@Override
-			public Tree next() {
-				return t.getChild(++current);
-			}
-
-			@Override
-			public void remove() {
-				t.deleteChild(current--);
-			}
-		}
-
-		Tree t;
-
-		public IterableTree(Tree t) {
-			this.t = t;
-		}
-
-		@Override
-		public Iterator<Tree> iterator() {
-			return new TreeIterator(t);
-		}
-
-	}
 
 	public static final Boolean FALSE = new Boolean(false);
 
 	// -- Boolean truths
 	public static final Integer ZERO = new Integer(0);
 	Logger log = Logger.getLogger("Interpreter");
-
-	HashMap<String, Object> memory = new HashMap<String, Object>();
 
 	/**
 	 * Instantiate the interpreter based on an InputStream.
@@ -135,6 +83,7 @@ public class Interpreter {
 	}
 
 	Object exec(Tree t) {
+		
 		switch (t.getType()) {
 		case 0: // Nil, root of the tree, fall through to 'block'
 		case LogoTurtleParser.BLOCK:
@@ -265,7 +214,7 @@ public class Interpreter {
 
 		log.info("Setting " + key + " = " + value);
 
-		memory.put(key, value);
+		ScopeStack.getInstance().put(key, (Symbol) value);
 
 		return value;
 	}
@@ -339,10 +288,15 @@ public class Interpreter {
 		System.exit(1);
 	}
 
+	/**
+	 * Returns the value of the symbol.
+	 * @param t
+	 * @return
+	 */
 	Object val(Tree t) {
 		String variableName = (String) exec(t.getChild(0));
 		log.info("Fetching value of " + variableName);
-		return memory.get(variableName);
+		return ScopeStack.getInstance().get(variableName).value;
 	}
 
 	Object while_(Tree t) {
@@ -351,7 +305,9 @@ public class Interpreter {
 
 		log.info("Executing while(" + condition.toStringTree() + "){"
 				+ block.toStringTree() + "}");
-
+		
+		ScopeStack.getInstance().push(new Scope(t));
+		
 		while (true) {
 			Object result = exec(condition);
 
@@ -369,8 +325,11 @@ public class Interpreter {
 				exec(block);
 			}
 		}
+		
+		ScopeStack.getInstance().pop();
 
 		return null;
 	}
 
+	
 }

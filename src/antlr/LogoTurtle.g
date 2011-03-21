@@ -20,6 +20,9 @@ tokens {
   MODULO='modulo';
   PRINT='print';
   MAKE='make';
+  TO='to';
+  END='end';
+  RETURN='return';
   
 // -- Logic
   WHILE='while';
@@ -54,7 +57,7 @@ tokens {
 }
 
 program 
-    : (statement? NEWLINE!)+
+    : statements
     ;
 
 statement
@@ -63,7 +66,14 @@ statement
         | print
         | while_
         | if_
-        | ifelse_ ) COMMENT?
+        | ifelse_ 
+        | function_ 
+        | return_ ) COMMENT?
+    ;
+
+statements
+    : (statement
+        | NEWLINE! )+
     ;
 
 
@@ -75,26 +85,26 @@ ref: '"'^ ID;
  ******************************/
 
 if_
-    : 'if'^ expression block else_*
+    : 'if'^ expression '['! block ']'! else_*
     ;
 
 else_
-    : 'else'^ ('if' expression)? block
+    : 'else'^ ('if' expression)? '['! block ']'!
     ;
     
 while_
-    : 'while'^ '['! expression ']'! block
+    : 'while'^ '['! expression ']'! '['! block ']'!
     ;
 
 ifelse_
-    : 'ifelse'^ expression iftrue=block (NEWLINE!)? iffalse=block
+    : 'ifelse'^ expression '['! iftrue=block ']'! (NEWLINE!)? '['! iffalse=block ']'!
     ;
 
 /******************************
  *       STATEMENT BLOCKS
  ******************************/
 block
-    : '[' (statement|NEWLINE)+ ']' -> ^(BLOCK statement+)
+    : statements -> ^(BLOCK statements+)
     ;
 
 /******************************
@@ -105,10 +115,19 @@ make
     ;
 
 print
-    : ( 'print'^ expression )             // Single print
-    | ( '('! 'print'^ expression+ ')'! )  // Parenthesized multi-print
+    : 'print'^ expression             // Single print
+    | '('! 'print'^ expression+ ')'!  // Parenthesized multi-print
     ;
 
+function_
+    : 'to' ID val*
+      block
+      'end'
+    ;
+
+return_
+    : 'return' expression
+    ;
 
 /******************************
  *       EXPRESSIONS
