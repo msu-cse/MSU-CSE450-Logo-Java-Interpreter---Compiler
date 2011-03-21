@@ -157,7 +157,7 @@ public class Interpreter {
 		case LogoTurtleParser.ID:
 			return id(t);
 		case LogoTurtleParser.IF:
-			unhandledTypeError(t);
+			return if_(t);
 		case LogoTurtleParser.IFELSE:
 			return ifelse(t);
 		case LogoTurtleParser.LT:

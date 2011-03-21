@@ -87,7 +87,7 @@ while_
     ;
 
 ifelse_
-    : 'ifelse'^ expression iftrue=block (NEWLINE?)! iffalse=block
+    : 'ifelse'^ expression iftrue=block (NEWLINE!)? iffalse=block
     ;
 
 /******************************
