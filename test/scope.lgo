@@ -1,0 +1,8 @@
+make "x 7
+
+if 1 [ 
+    make "x 9
+    ( print "x "is :x )
+]
+
+( print "x "is :x )

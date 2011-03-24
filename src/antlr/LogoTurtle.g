@@ -136,7 +136,7 @@ term
     : (val
     | ref
     | '('! expression ')'!
-    | NUMBER)^
+    | number)^
     ; 
     
 unary
@@ -168,6 +168,19 @@ expression
     : ('not'^)* boolean_
     ;
 
+number
+    : (int_|float_)
+    ;
+
+float_ returns [float $val]
+    : ( whole=NUMBER+ '.' dec=NUMBER* 
+        | '.' dec=NUMBER+ ) 
+        {  }
+    ;
+
+int_ returns [int $val]
+    : NUMBER+  // {$val = Integer.valueOf($NUMBER.text);}
+    ;
 
 /******************************
  *       MISC
@@ -178,8 +191,9 @@ fragment DIGIT : '0'..'9';
 
 ID    : (ALPHA|'_') (ALPHA|DIGIT|'_')* { idCount++; };
 
-NUMBER 
-      : (DIGIT)+ { numberCount++; };
+NUMBER
+      : (DIGIT)+;
+
 
 NEWLINE 
       : '\r'? '\n' { newlineCount++; };

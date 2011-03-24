@@ -1,5 +1,6 @@
 
 
 public class StackFrame {
-	IterableTree returnLocation;
+	TypeAwareTree returnLocation;
+	TypeAwareTree caller;
 }

@@ -19,7 +19,7 @@ public class ReverseIterableStack<T> extends java.util.Stack<T> implements
 
 		public StackIterator(ReverseIterableStack<T> stack) {
 			this.stack = stack;
-			this.current = stack.get( stack.size() - 1 );
+			this.current = stack.size() > 0 ? stack.get( stack.size() - 1 ) : null;
 		}
 
 		private void checkSanity() {
