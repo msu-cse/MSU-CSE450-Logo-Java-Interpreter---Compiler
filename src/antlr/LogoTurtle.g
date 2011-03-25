@@ -77,7 +77,7 @@ statement
         | ifelse_
         | function_call 
         | function_ 
-/*        | repeat*/
+        | repeat
         | turtle
         | return_ ) COMMENT? NEWLINE?
     ;

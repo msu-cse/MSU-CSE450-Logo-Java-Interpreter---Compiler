@@ -42,6 +42,7 @@ public class Interpreter {
 	 * @throws Exception
 	 */
 	public Interpreter(ANTLRStringStream in) throws Exception {
+		this();
 		instance = this;
 		
 		// -- Parse the input`
@@ -90,6 +91,18 @@ public class Interpreter {
 		turtle.turtleBackward((Integer) exec(child));
 		return null;
 	}
+	
+	private Object forward(ScopedTree t) {
+		ScopedTree child = t.getChild(0);
+
+		
+		Integer distance = (Integer) exec(child);
+		log.info("Moving forward" + distance);
+
+		turtle.turtleForward(distance);
+		return null;
+	}
+
 
 	private Object beginFill(ScopedTree t) {
 		log.info("Beginning fill");
@@ -168,7 +181,7 @@ public class Interpreter {
 			return equality(t); // ==
 		case LogoTurtleParser.FORWARD:
 		case LogoTurtleParser.FORWARD2:
-			return backward(t);
+			return forward(t);
 		case LogoTurtleParser.GT:
 			return LogoMath.op(t); // >
 		case LogoTurtleParser.GTE:
