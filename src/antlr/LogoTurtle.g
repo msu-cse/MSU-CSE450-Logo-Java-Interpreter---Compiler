@@ -32,6 +32,7 @@ tokens {
   AND='and';
   OR='or';
   NOT='not';
+  REPEAT='repeat';
   
 // -- Comparison
   EQ='=';
@@ -43,6 +44,24 @@ tokens {
 // -- References
   BYVAL=':';
   BYNAME='"';
+  
+// -- Turtle
+  PENUP='penup';
+  PENDOWN='pendown';
+  FORWARD='forward';
+  FORWARD2='fd';
+  BACKWARD='back';
+  BACKWARD2='bk';
+  LEFT='left';
+  LEFT2='lt';
+  RIGHT='right';
+  RIGHT2='rt';
+  SETHEADING='setheading';
+  SETHEADING2='seth';
+  CIRCLE='circle';
+  COLOR='setpencolor';
+  BEGINFILL='beginfill';
+  ENDFILL='endfill';
 }
 
 program 
@@ -58,6 +77,8 @@ statement
         | ifelse_
         | function_call 
         | function_ 
+/*        | repeat*/
+        | turtle
         | return_ ) COMMENT? NEWLINE?
     ;
 
@@ -94,6 +115,10 @@ while_
 
 ifelse_
     : 'ifelse'^ expression '['! iftrue=block ']'! NEWLINE? '['! iffalse=block ']'!
+    ;
+
+repeat // 'repeat' is not a class-requried statement, but is nice to have
+    : 'repeat'^ expression '['! block ']'!
     ;
 
 /******************************
@@ -225,6 +250,33 @@ int_
 @after {$tree.valueType = Type.INT;}
     : INTEGER <IntegerNode>
     ;
+
+/******************************
+ *       TURTLE GRAPHICS
+ ******************************/
+turtle: ( penup
+          | pendown
+          | forward
+          | backward
+          | left
+          | right
+          | setpos
+          | circle
+          | color
+          | beginfill
+          | endfill );
+penup:      'penup'^;
+pendown:    'pendown'^;
+forward:    ('forward'|'fd')^       expression;
+backward:   ('back'|'bk')^          expression;
+left:       ('left'|'lt')^          expression;
+right:      ('right'|'rt')^         expression;
+heading:    ('setheading'|'seth')^  expression;
+setpos:     'setpos'^               expression expression;
+circle:     'circle'                expression;
+color:      'setpencolor'^          expression ',' expression ',' expression;
+beginfill:  'beginfill';
+endfill:    'endfill';
 
 /******************************
  *       MISC
