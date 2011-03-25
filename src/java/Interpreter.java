@@ -3,10 +3,14 @@ import java.util.Iterator;
 import java.util.Stack;
 import java.util.logging.Logger;
 
+import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
+
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.TokenRewriteStream;
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
+
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class Interpreter {
 
@@ -14,7 +18,13 @@ public class Interpreter {
 
 	// -- Boolean truths
 	public static final Integer ZERO = new Integer(0);
+
+	private static Interpreter instance = null;
 	Logger log = Logger.getLogger("Interpreter");
+	
+	static Interpreter getInstance() {
+		return instance ;
+	}
 
 	/**
 	 * Instantiate the interpreter based on an InputStream.
@@ -23,7 +33,9 @@ public class Interpreter {
 	 * @throws Exception
 	 */
 	public Interpreter(ANTLRStringStream in) throws Exception {
-		// -- Parse the input
+		instance = this;
+		
+		// -- Parse the input`
 		LogoTurtleLexer lexer = new LogoTurtleLexer(in);
 		TokenRewriteStream tokens = new TokenRewriteStream(lexer);
 		LogoTurtleParser parser = new LogoTurtleParser(tokens);
@@ -37,43 +49,36 @@ public class Interpreter {
 			throw new Exception("There were "
 					+ parser.getNumberOfSyntaxErrors() + " syntax errors.");
 
-		// -- Execute the tree
-		exec((TypeAwareTree) r.getTree());
-	}
-
-	public Interpreter(TypeAwareTree t) {
+		// -- Create the global scope
+		ScopedTree t = (ScopedTree) r.getTree();
+		t.memorySpace = new HashMap<String,Symbol>();
+		
 		exec(t);
 	}
 
-	Object add(TypeAwareTree t) {
-		log.info("Adding" + t.toStringTree());
-		int x = (Integer) exec(t.getChild(0));
-		int y = (Integer) exec(t.getChild(1));
-		int z = x + y;
-		return z;
+	public Interpreter(ScopedTree t) {
+		instance = this;
+		
+		exec(t);
 	}
 
-	Object and(TypeAwareTree t) {
+	Object and(ScopedTree t) {
 		log.info("and'ing " + t.toStringTree());
 		Boolean x = (Boolean) exec(t.getChild(0));
 		Boolean y = (Boolean) exec(t.getChild(1));
 		return x && y;
 	}
 
-	Object block(TypeAwareTree t) {
+	Object block(ScopedTree t) {
 		log.info("Executing block" + t.toStringTree());
-
-		ScopeStack.getInstance().push(new Scope(t));
 		
-		for (TypeAwareTree child : t)
+		for (ScopedTree child : t)
 			exec(child);
 		
-		ScopeStack.getInstance().pop();
-
 		return null;
 	}
 
-	Object div(TypeAwareTree t) {
+	Object div(ScopedTree t) {
 		log.info("dividing " + t.toStringTree());
 		int x = (Integer) exec(t.getChild(0));
 		int y = (Integer) exec(t.getChild(1));
@@ -81,18 +86,24 @@ public class Interpreter {
 		return z;
 	}
 
-	private Object end(TypeAwareTree t) {
+	private Object end(ScopedTree t) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	Object equality(TypeAwareTree t) {
+	Object equality(ScopedTree t) {
 		log.info("and'ing " + t.toStringTree());
 
 		return exec(t.getChild(0)).equals(exec(t.getChild(1)));
 	}
 
-	Object exec(TypeAwareTree t) {
+	static Object e(ScopedTree t) {
+		return getInstance().exec(t);
+	}
+	
+	Object exec(ScopedTree t) {
+		
+		log.info("Executing " + t.toString());
 		
 		switch (t.getType()) {
 		case 0: // Nil, root of the tree, fall through to 'block'
@@ -111,6 +122,8 @@ public class Interpreter {
 			return equality(t); // ==
 		case LogoTurtleParser.END:
 			return end(t);
+		case LogoTurtleParser.FLOAT:
+			return Float.parseFloat(t.getText());
 		case LogoTurtleParser.GT:
 			return greaterThan(t); // >
 		case LogoTurtleParser.GTE:
@@ -128,19 +141,19 @@ public class Interpreter {
 		case LogoTurtleParser.MAKE:
 			return make(t);
 		case LogoTurtleParser.MINUS:
-			return minus(t); // -
+			return LogoMath.op(t); // -
 		case LogoTurtleParser.MODULO:
-			return modulo(t); // %
+			return LogoMath.op(t); // %
 		case LogoTurtleParser.MULT:
-			return mult(t); // *
+			return LogoMath.op(t); // *
 		case LogoTurtleParser.NOT:
 			return negate(t); // !
-		case LogoTurtleParser.NUMBER:
+		case LogoTurtleParser.INTEGER:
 			return Integer.parseInt(t.getText());
 		case LogoTurtleParser.OR:
 			return or(t); // ||
 		case LogoTurtleParser.PLUS:
-			return add(t); // +
+			return LogoMath.op(t); // +
 		case LogoTurtleParser.PRINT:
 			return print(t);
 		case LogoTurtleParser.RETURN:
@@ -156,7 +169,7 @@ public class Interpreter {
 		return null;
 	}
 
-	Object greaterThan(TypeAwareTree t) {
+	Object greaterThan(ScopedTree t) {
 		Object a = exec(t.getChild(0));
 		Object b = exec(t.getChild(1));
 		if (a instanceof Number && b instanceof Number) {
@@ -170,38 +183,32 @@ public class Interpreter {
 		return false;
 	}
 
-	Object greaterThanEquals(TypeAwareTree t) {
+	Object greaterThanEquals(ScopedTree t) {
 		log.info("evaluating " + t.toStringTree());
 		int x = (Integer) exec(t.getChild(0));
 		int y = (Integer) exec(t.getChild(1));
 		return x >= y;
 	}
 
-	String id(TypeAwareTree t) {
+	String id(ScopedTree t) {
 		return t.getText();
 	}
 
-	Object if_(TypeAwareTree t) {
+	Object if_(ScopedTree t) {
 		Object result = exec(t.getChild(0));
-
-		ScopeStack.getInstance().push(new Scope(t));
 		
 		if (!(FALSE.equals(result) || ZERO.equals(result)))
 			exec(t.getChild(1));
-
-		ScopeStack.getInstance().pop();
 		
 		return null;
 	}
 
-	Object ifelse(TypeAwareTree t) {
-		TypeAwareTree condition = t.getChild(0);
-		TypeAwareTree iftrue = t.getChild(1);
-		TypeAwareTree iffalse = t.getChild(2);
+	Object ifelse(ScopedTree t) {
+		ScopedTree condition = t.getChild(0);
+		ScopedTree iftrue = t.getChild(1);
+		ScopedTree iffalse = t.getChild(2);
 
 		Object result = exec(condition);
-
-		ScopeStack.getInstance().push(new Scope(t));
 		
 		// Note that false what we test for
 		if (FALSE.equals(result) || ZERO.equals(result)) {
@@ -210,59 +217,32 @@ public class Interpreter {
 			exec(iftrue);
 		}
 		
-		ScopeStack.getInstance().pop();
-		
 		return null;
 	}
 
-	Object lessThan(TypeAwareTree t) {
+	Object lessThan(ScopedTree t) {
 		log.info("evaluating " + t.toStringTree());
 		int x = (Integer) exec(t.getChild(0));
 		int y = (Integer) exec(t.getChild(1));
 		return x < y;
 	}
 
-	Object lessThanEquals(TypeAwareTree t) {
+	Object lessThanEquals(ScopedTree t) {
 		log.info("evaluating " + t.toStringTree());
 		int x = (Integer) exec(t.getChild(0));
 		int y = (Integer) exec(t.getChild(1));
 		return x <= y;
 	}
 
-	Object make(TypeAwareTree t) {
+	Object make(ScopedTree t) {
 		String key = exec(t.getChild(0)).toString();
 		Object value = exec(t.getChild(1));
 
 		log.info("Setting " + key + " = " + value);
-
-		ScopeStack.getInstance().put(key, value);
+		
+		t.put(key, value);
 
 		return value;
-	}
-
-	Object minus(TypeAwareTree t) {
-		log.info("subtracting " + t.toStringTree());
-		int x = (Integer) exec(t.getChild(0));
-		int y = (Integer) exec(t.getChild(1));
-		int z = x - y;
-		return z;
-	}
-
-	Object modulo(TypeAwareTree t) {
-		log.info("Modulo'ing " + t.toStringTree());
-		int x = (Integer) exec(t.getChild(0));
-		int y = (Integer) exec(t.getChild(1));
-		int z = x % y;
-
-		return z;
-	}
-
-	Object mult(TypeAwareTree t) {
-		log.info("Multiplying " + t.toStringTree());
-		int x = (Integer) exec(t.getChild(0));
-		int y = (Integer) exec(t.getChild(1));
-		int z = x * y;
-		return z;
 	}
 
 	/**
@@ -271,32 +251,32 @@ public class Interpreter {
 	 * @param t
 	 * @return
 	 */
-	Object name(TypeAwareTree t) {
+	Object name(ScopedTree t) {
 		String variableName = (String) exec(t.getChild(0));
 		log.info("Encountered variable or string " + variableName);
 		return variableName;
 	}
 
-	Object negate(TypeAwareTree t) {
+	Object negate(ScopedTree t) {
 		Boolean x = (Boolean) exec(t.getChild(0));
 		return !x;
 	}
 
-	Object or(TypeAwareTree t) {
+	Object or(ScopedTree t) {
 		log.info("or'ing " + t.toStringTree());
 		Boolean x = (Boolean) exec(t.getChild(0));
 		Boolean y = (Boolean) exec(t.getChild(1));
 		return x || y;
 	}
 
-	Object print(TypeAwareTree t) {
+	Object print(ScopedTree t) {
 		log.info("Printing " + t.toStringTree());
 
 		// (print "x "y "z) will print multiple items, so there may be
 		// many children. Only print a space if there are.
 		String space = t.getChildCount() > 1 ? " " : "";
 
-		for (TypeAwareTree subtree : t) {
+		for (ScopedTree subtree : t) {
 			Object printValue = exec(subtree);
 			log.info("Printing [" + printValue + "]");
 			System.out.print(printValue + space);
@@ -307,17 +287,17 @@ public class Interpreter {
 		return null;
 	}
 
-	private Object return_(TypeAwareTree t) {
+	private Object return_(ScopedTree t) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	private Object to(TypeAwareTree t) {
+	private Object to(ScopedTree t) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	void unhandledTypeError(TypeAwareTree t) {
+	void unhandledTypeError(ScopedTree t) {
 		log.severe("Encountered unhandled type " + t.getType() + " ("
 				+ LogoTurtleParser.tokenNames[t.getType()] + ")" + " at \""
 				+ t.getText() + "\"" + " on line " + t.getLine() + ":"
@@ -330,20 +310,18 @@ public class Interpreter {
 	 * @param t
 	 * @return
 	 */
-	Object val(TypeAwareTree t) {
+	Object val(ScopedTree t) {
 		String variableName = (String) exec(t.getChild(0));
 		log.info("Fetching value of " + variableName);
-		return ScopeStack.getInstance().get(variableName).value;
+		return t.get(variableName,t);
 	}
 
-	Object while_(TypeAwareTree t) {
-		TypeAwareTree condition = t.getChild(0);
-		TypeAwareTree block = t.getChild(1);
+	Object while_(ScopedTree t) {
+		ScopedTree condition = t.getChild(0);
+		ScopedTree block = t.getChild(1);
 
 		log.info("Executing while(" + condition.toStringTree() + "){"
 				+ block.toStringTree() + "}");
-		
-		ScopeStack.getInstance().push(new Scope(t));
 		
 		while (true) {
 			Object result = exec(condition);
@@ -363,8 +341,6 @@ public class Interpreter {
 			}
 		}
 		
-		ScopeStack.getInstance().pop();
-
 		return null;
 	}
 

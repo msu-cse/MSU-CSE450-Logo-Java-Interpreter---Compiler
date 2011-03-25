@@ -2,7 +2,7 @@
 grammar LogoTurtle;
 options {
   output=AST;
-  ASTLabelType=CommonTree; // type of $stat.tree ref etc...
+  ASTLabelType=ScopedTree; // type of $stat.tree ref etc...
 }
 
 tokens { 
@@ -22,7 +22,7 @@ tokens {
   MAKE='make';
   TO='to';
   END='end';
-  RETURN='return';
+  RETURN='output';
   
 // -- Logic
   WHILE='while';
@@ -45,15 +45,13 @@ tokens {
   BYNAME='"';
 }
 
-@lexer::members{ 
-  public Integer mathopCount = 0;
-  public Integer commandCount = 0;
-  public Integer idCount = 0;
-  public Integer refopCount = 0;
-  public Integer numberCount = 0;
-  public Integer newlineCount = 0;
-  public Integer commentCount = 0;
+@lexer::members{
+}
 
+@members{
+  public Type result(Type rt, ScopedTree tree) { 
+    return Type.getResultType(rt, tree); 
+  }
 }
 
 program 
@@ -66,19 +64,28 @@ statement
         | print
         | while_
         | if_
-        | ifelse_ 
+        | ifelse_
+        | function_call 
         | function_ 
-        | return_ ) COMMENT?
+        | return_ ) COMMENT? NEWLINE?
     ;
 
 statements
-    : (statement
-        | NEWLINE! )+
+    : statement+
     ;
 
 
-val: ':'^ ID;
-ref: '"'^ ID;
+val
+@after { 
+  $tree.valueType = $tree.get($id.text,$tree).getValueType();
+}
+    : ':'^ id=ID
+    ;
+
+ref
+@after { $tree.valueType = Type.STRING; }
+    : '"'^ ID
+    ;
 
 /******************************
  *       LOGIC CONTROL
@@ -97,7 +104,7 @@ while_
     ;
 
 ifelse_
-    : 'ifelse'^ expression '['! iftrue=block ']'! (NEWLINE!)? '['! iffalse=block ']'!
+    : 'ifelse'^ expression '['! iftrue=block ']'! NEWLINE? '['! iffalse=block ']'!
     ;
 
 /******************************
@@ -111,7 +118,17 @@ block
  *       COMMANDS
  ******************************/
 make
-    : 'make'^ ref expression
+@after {
+  // We must assume that child(0).child(0) is the actual name.
+  
+  if($symname.tree.valueType == Type.STRING && $symname.tree.getChildCount() > 0){
+    System.out.println($symname.tree.toStringTree());
+    System.out.println($symname.tree.getChild(0).toStringTree());
+    $tree.put($symname.tree.getChild(0).toString(), symval);
+  }
+  else throw new LogoException($tree, "Attempted to assign value to non-string " + $symname.tree);
+}
+    : 'make'^ symname=ref symval=expression
     ;
 
 print
@@ -119,14 +136,26 @@ print
     | '('! 'print'^ expression+ ')'!  // Parenthesized multi-print
     ;
 
+parameters
+    : val*
+    ;
+
 function_
-    : 'to' ID val*
+    : 'to' ID parameters
       block
       'end'
     ;
 
 return_
-    : 'return' expression
+    : 'output' expression
+    ;
+
+arguments
+    : '('! (val|ref)* ')'!
+    ;
+
+function_call
+    : ID arguments
     ;
 
 /******************************
@@ -140,46 +169,77 @@ term
     ; 
     
 unary
+@after { $tree.valueType = x.tree.valueType;}
     // : ('+'^|'-'^)* negation // Ignore this for now.
-    : term  
+    : x=term                                        
     ;
 
 mult
-    : unary (('*'|'/'|'%')^ unary)* 
+@init  { TypeSet ts = new TypeSet(); }
+@after { $tree.valueType = Type.resolve(ts, $tree);}
+    : x=unary                                         { ts.add($x.tree); }
+      (
+        ('*'|'/'|'%')^ y=unary                        { ts.add($y.tree); }
+      )* 
     ;
 
 modulo
-    : ('modulo'^ mult)? mult
+@init  { TypeSet ts = new TypeSet(); }
+@after { $tree.valueType = Type.resolve(ts, $tree);}
+    : 'modulo'^ x=mult y=mult                         { ts.add($x.tree);
+                                                        ts.add($y.tree); }
+    | z=mult                                          { ts.add($z.tree); }
     ;
 
 add
-    : modulo (('+'|'-')^ modulo)*
+@init  { TypeSet ts = new TypeSet(); }
+@after { $tree.valueType = Type.resolve(ts, $tree);}
+    : x=modulo                                        { ts.add($x.tree); } 
+      (
+        ('+'|'-')^ y=modulo                           { ts.add($y.tree); }
+      )*
     ;
 
 equality
-    : add (( '<' | '>' | '=' | '==' | '<=' | '>=' )^ add)*
+@init  { TypeSet ts = new TypeSet(); }
+@after { $tree.valueType = Type.resolve(ts, $tree);}
+    : x=add                                           { ts.add($x.tree); }
+      (
+        ( '<' | '>' | '=' | '==' | '<=' | '>=' )^ y=add
+                                                      { ts.add($y.tree); }
+      )*
     ;
 
 boolean_
-    : equality (('and'|'or')^ equality)*
+@init  { TypeSet ts = new TypeSet(); }
+@after { $tree.valueType = Type.resolve(ts, $tree);}
+    : x=equality                                      { ts.add($x.tree); }
+      (
+        ('and'|'or')^ y=equality                      { ts.add($y.tree); }
+      )*
     ;
 
 expression
-    : ('not'^)* boolean_
+@init  { TypeSet ts = new TypeSet(); }
+@after { $tree.valueType = Type.resolve(ts, $tree);}
+    : ('not'^)* b=boolean_                            { ts.add($b.tree); }
     ;
 
 number
-    : (int_|float_)
+@init  { TypeSet ts = new TypeSet(); }
+@after { $tree.valueType = Type.resolve(ts, $tree);}
+    : i=int_                                          { ts.add($i.tree); }
+    | f=float_                                        { ts.add($f.tree); }
     ;
 
-float_ returns [float $val]
-    : ( whole=NUMBER+ '.' dec=NUMBER* 
-        | '.' dec=NUMBER+ ) 
-        {  }
+float_
+@after {$tree.valueType = Type.FLOAT;}
+    : FLOAT 
     ;
 
-int_ returns [int $val]
-    : NUMBER+  // {$val = Integer.valueOf($NUMBER.text);}
+int_
+@after {$tree.valueType = Type.INT;}
+    : INTEGER
     ;
 
 /******************************
@@ -189,17 +249,25 @@ int_ returns [int $val]
 fragment ALPHA : ('a'..'z'|'A'..'Z');
 fragment DIGIT : '0'..'9';
 
-ID    : (ALPHA|'_') (ALPHA|DIGIT|'_')* { idCount++; };
+ID    : (ALPHA|'_') (ALPHA|DIGIT|'_')* ;
 
-NUMBER
+fragment NUMBER
       : (DIGIT)+;
 
+INTEGER
+      : NUMBER
+      ;
+
+FLOAT
+      : NUMBER '.' NUMBER
+//      | '.' NUMBER
+      ;
 
 NEWLINE 
-      : '\r'? '\n' { newlineCount++; };
+      : '\r'? '\n' { $channel=HIDDEN; };
 
 COMMENT
-      : ';' ~('\n')* {  commentCount++; $channel=HIDDEN; };
+      : ';' ~('\n')* { $channel=HIDDEN; };
 
 WS    : ( ' '
         | '\t'
