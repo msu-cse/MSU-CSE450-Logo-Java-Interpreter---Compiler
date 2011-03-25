@@ -1,10 +1,9 @@
 import java.util.Iterator;
 
 import org.antlr.runtime.Token;
-import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
 
-abstract class IterableTree<T extends IterableTree<?>> extends CommonTree implements Iterable<T> {
+abstract class IterableTree<T extends IterableTree<?>> extends TreeHelper implements Iterable<T> {
 	
 	@SuppressWarnings("hiding")
 	private class IterableTreeIterator<T extends IterableTree<?>> implements Iterator<T> {

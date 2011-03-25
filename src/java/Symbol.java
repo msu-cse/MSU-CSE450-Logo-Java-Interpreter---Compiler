@@ -2,8 +2,8 @@
 public class Symbol {
 	/** Node at which the symbol was initially declared */
 	ScopedTree declarationNode;
-	private String name;
-	private Object value;
+	protected String name;
+	protected Object value;
 
 	private Type valueType;
 

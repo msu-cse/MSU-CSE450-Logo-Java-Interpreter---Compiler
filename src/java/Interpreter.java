@@ -53,6 +53,8 @@ public class Interpreter {
 		ScopedTree t = (ScopedTree) r.getTree();
 		t.memorySpace = new HashMap<String,Symbol>();
 		
+		// -- Execute
+		log.info("Full AST: " + t.toStringTree());
 		exec(t);
 	}
 
@@ -60,13 +62,6 @@ public class Interpreter {
 		instance = this;
 		
 		exec(t);
-	}
-
-	Object and(ScopedTree t) {
-		log.info("and'ing " + t.toStringTree());
-		Boolean x = (Boolean) exec(t.getChild(0));
-		Boolean y = (Boolean) exec(t.getChild(1));
-		return x && y;
 	}
 
 	Object block(ScopedTree t) {
@@ -78,23 +73,19 @@ public class Interpreter {
 		return null;
 	}
 
-	Object div(ScopedTree t) {
-		log.info("dividing " + t.toStringTree());
-		int x = (Integer) exec(t.getChild(0));
-		int y = (Integer) exec(t.getChild(1));
-		int z = x / y;
-		return z;
-	}
-
 	private Object end(ScopedTree t) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	Object equality(ScopedTree t) {
-		log.info("and'ing " + t.toStringTree());
+		log.info("=='ing " + t.toStringTree());
 
-		return exec(t.getChild(0)).equals(exec(t.getChild(1)));
+		// I think that we can let Java do its .equals magic.
+		Object left =  exec(t.getChild(0));
+		Object right = exec(t.getChild(1));
+		
+		return left.equals(right);
 	}
 
 	static Object e(ScopedTree t) {
@@ -103,7 +94,7 @@ public class Interpreter {
 	
 	Object exec(ScopedTree t) {
 		
-		log.info("Executing " + t.toString());
+		log.info("Executing " + t.toStringTree());
 		
 		switch (t.getType()) {
 		case 0: // Nil, root of the tree, fall through to 'block'
@@ -111,13 +102,13 @@ public class Interpreter {
 			return block(t);
 
 		case LogoTurtleParser.AND:
-			return and(t); // &&
+			return LogoLogic.op(t); // &&
 		case LogoTurtleParser.BYNAME:
 			return name(t);
 		case LogoTurtleParser.BYVAL:
 			return val(t);
 		case LogoTurtleParser.DIV:
-			return div(t); // /
+			return LogoMath.op(t); // /
 		case LogoTurtleParser.EQ:
 			return equality(t); // ==
 		case LogoTurtleParser.END:
@@ -125,9 +116,9 @@ public class Interpreter {
 		case LogoTurtleParser.FLOAT:
 			return Float.parseFloat(t.getText());
 		case LogoTurtleParser.GT:
-			return greaterThan(t); // >
+			return LogoMath.op(t); // >
 		case LogoTurtleParser.GTE:
-			return greaterThanEquals(t); // >=
+			return LogoMath.op(t); // >=
 		case LogoTurtleParser.ID:
 			return id(t);
 		case LogoTurtleParser.IF:
@@ -135,9 +126,9 @@ public class Interpreter {
 		case LogoTurtleParser.IFELSE:
 			return ifelse(t);
 		case LogoTurtleParser.LT:
-			return lessThan(t); // <
+			return LogoMath.op(t); // <
 		case LogoTurtleParser.LTE:
-			return lessThanEquals(t); // <=
+			return LogoMath.op(t); // <=
 		case LogoTurtleParser.MAKE:
 			return make(t);
 		case LogoTurtleParser.MINUS:
@@ -147,11 +138,11 @@ public class Interpreter {
 		case LogoTurtleParser.MULT:
 			return LogoMath.op(t); // *
 		case LogoTurtleParser.NOT:
-			return negate(t); // !
+			return LogoLogic.op(t); // !
 		case LogoTurtleParser.INTEGER:
 			return Integer.parseInt(t.getText());
 		case LogoTurtleParser.OR:
-			return or(t); // ||
+			return LogoLogic.op(t); // ||
 		case LogoTurtleParser.PLUS:
 			return LogoMath.op(t); // +
 		case LogoTurtleParser.PRINT:
@@ -169,28 +160,28 @@ public class Interpreter {
 		return null;
 	}
 
-	Object greaterThan(ScopedTree t) {
-		Object a = exec(t.getChild(0));
-		Object b = exec(t.getChild(1));
-		if (a instanceof Number && b instanceof Number) {
-
-			Number x = (Number) a;
-			Number y = (Number) b;
-
-			return x.floatValue() > y.floatValue();
-
+	Object id(ScopedTree t) {
+		if(t instanceof CallNode) {			
+			CallNode cn = (CallNode) t;
+			Symbol s = cn.get(t.getText(), cn);
+			log.info(s.getClass().getName());
+			if(s.getValue() instanceof Function) {
+				Function f = (Function) s.getValue();
+				
+				cn.calledFunction = f;
+					
+				try {
+					f.call(cn, cn.getChildren());
+				}
+				catch (ReturnException re) {
+					return cn.calledFunction.returnValue;
+				}	
+			} else {
+				throw new RuntimeException("Tried to call " + t.getText() + " which is not a function.");
+			}
 		}
-		return false;
-	}
-
-	Object greaterThanEquals(ScopedTree t) {
-		log.info("evaluating " + t.toStringTree());
-		int x = (Integer) exec(t.getChild(0));
-		int y = (Integer) exec(t.getChild(1));
-		return x >= y;
-	}
-
-	String id(ScopedTree t) {
+		
+		// -- Just a simple ID
 		return t.getText();
 	}
 
@@ -204,6 +195,7 @@ public class Interpreter {
 	}
 
 	Object ifelse(ScopedTree t) {
+		
 		ScopedTree condition = t.getChild(0);
 		ScopedTree iftrue = t.getChild(1);
 		ScopedTree iffalse = t.getChild(2);
@@ -218,20 +210,6 @@ public class Interpreter {
 		}
 		
 		return null;
-	}
-
-	Object lessThan(ScopedTree t) {
-		log.info("evaluating " + t.toStringTree());
-		int x = (Integer) exec(t.getChild(0));
-		int y = (Integer) exec(t.getChild(1));
-		return x < y;
-	}
-
-	Object lessThanEquals(ScopedTree t) {
-		log.info("evaluating " + t.toStringTree());
-		int x = (Integer) exec(t.getChild(0));
-		int y = (Integer) exec(t.getChild(1));
-		return x <= y;
 	}
 
 	Object make(ScopedTree t) {
@@ -257,18 +235,6 @@ public class Interpreter {
 		return variableName;
 	}
 
-	Object negate(ScopedTree t) {
-		Boolean x = (Boolean) exec(t.getChild(0));
-		return !x;
-	}
-
-	Object or(ScopedTree t) {
-		log.info("or'ing " + t.toStringTree());
-		Boolean x = (Boolean) exec(t.getChild(0));
-		Boolean y = (Boolean) exec(t.getChild(1));
-		return x || y;
-	}
-
 	Object print(ScopedTree t) {
 		log.info("Printing " + t.toStringTree());
 
@@ -288,13 +254,22 @@ public class Interpreter {
 	}
 
 	private Object return_(ScopedTree t) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	private Object to(ScopedTree t) {
-		// TODO Auto-generated method stub
-		return null;
+		Function f = new Function(t);
+		t.put(f.getName(), f);
+		
+		log.info(f.getClass().getName());
+		
+		Object otherF = t.get(f.getName(), t).getClass().getName();
+		log.info(otherF.toString());
+		
+		log.info(new Boolean(f==otherF).toString());
+		
+		return f;
 	}
 
 	void unhandledTypeError(ScopedTree t) {
@@ -313,17 +288,21 @@ public class Interpreter {
 	Object val(ScopedTree t) {
 		String variableName = (String) exec(t.getChild(0));
 		log.info("Fetching value of " + variableName);
-		return t.get(variableName,t);
+		Object value = t.get(variableName,t).getValue();
+		log.info("... " + value);
+		return value;
 	}
 
 	Object while_(ScopedTree t) {
+		
 		ScopedTree condition = t.getChild(0);
 		ScopedTree block = t.getChild(1);
 
 		log.info("Executing while(" + condition.toStringTree() + "){"
 				+ block.toStringTree() + "}");
-		
+				
 		while (true) {
+			log.info("Testing condition " + condition.toStringTree());
 			Object result = exec(condition);
 
 			if (ZERO.equals(result)) {

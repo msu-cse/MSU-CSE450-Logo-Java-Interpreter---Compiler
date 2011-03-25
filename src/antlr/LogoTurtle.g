@@ -45,15 +45,6 @@ tokens {
   BYNAME='"';
 }
 
-@lexer::members{
-}
-
-@members{
-  public Type result(Type rt, ScopedTree tree) { 
-    return Type.getResultType(rt, tree); 
-  }
-}
-
 program 
     : statements
     ;
@@ -71,20 +62,18 @@ statement
     ;
 
 statements
-    : statement+
+    : (statement+)^
     ;
 
 
-val
-@after { 
-  $tree.valueType = $tree.get($id.text,$tree).getValueType();
-}
-    : ':'^ id=ID
+val   
+@after  { $tree.valueType = null; }
+    : ':'^ ID<ValNode>
     ;
 
 ref
 @after { $tree.valueType = Type.STRING; }
-    : '"'^ ID
+    : '"'^ ID<StringNode>
     ;
 
 /******************************
@@ -118,17 +107,7 @@ block
  *       COMMANDS
  ******************************/
 make
-@after {
-  // We must assume that child(0).child(0) is the actual name.
-  
-  if($symname.tree.valueType == Type.STRING && $symname.tree.getChildCount() > 0){
-    System.out.println($symname.tree.toStringTree());
-    System.out.println($symname.tree.getChild(0).toStringTree());
-    $tree.put($symname.tree.getChild(0).toString(), symval);
-  }
-  else throw new LogoException($tree, "Attempted to assign value to non-string " + $symname.tree);
-}
-    : 'make'^ symname=ref symval=expression
+    : 'make'^ ref expression
     ;
 
 print
@@ -136,14 +115,10 @@ print
     | '('! 'print'^ expression+ ')'!  // Parenthesized multi-print
     ;
 
-parameters
-    : val*
-    ;
-
 function_
-    : 'to' ID parameters
+    : 'to' ID val*
       block
-      'end'
+      'end' -> ^('to' ID val* block)
     ;
 
 return_
@@ -155,7 +130,7 @@ arguments
     ;
 
 function_call
-    : ID arguments
+    : ID<CallNode>^ arguments
     ;
 
 /******************************
@@ -176,70 +151,79 @@ unary
 
 mult
 @init  { TypeSet ts = new TypeSet(); }
-@after { $tree.valueType = Type.resolve(ts, $tree);}
-    : x=unary                                         { ts.add($x.tree); }
+@after { $tree.valueType = ts.returnType;}
+    : x=unary
+      { ts.returnType = $x.tree.valueType; }
       (
-        ('*'|'/'|'%')^ y=unary                        { ts.add($y.tree); }
+        ('*'|'/'|'%')^ y=unary
+         { ts.add($y.tree); }
       )* 
     ;
 
 modulo
 @init  { TypeSet ts = new TypeSet(); }
-@after { $tree.valueType = Type.resolve(ts, $tree);}
-    : 'modulo'^ x=mult y=mult                         { ts.add($x.tree);
-                                                        ts.add($y.tree); }
-    | z=mult                                          { ts.add($z.tree); }
+@after { $tree.valueType = ts.returnType;}
+    : 'modulo'^ x=mult y=mult
+      { ts.add($x.tree); ts.add($y.tree); }
+    | z=mult
+      { ts.returnType = $z.tree.valueType; }
     ;
 
 add
 @init  { TypeSet ts = new TypeSet(); }
-@after { $tree.valueType = Type.resolve(ts, $tree);}
-    : x=modulo                                        { ts.add($x.tree); } 
+@after { $tree.valueType = ts.returnType;}
+    : x=modulo                                        
+      { ts.returnType = $x.tree.valueType; } 
       (
-        ('+'|'-')^ y=modulo                           { ts.add($y.tree); }
+        ('+'|'-')^ y=modulo
+        { ts.add($x.tree); ts.add($y.tree); }
       )*
     ;
 
 equality
 @init  { TypeSet ts = new TypeSet(); }
-@after { $tree.valueType = Type.resolve(ts, $tree);}
-    : x=add                                           { ts.add($x.tree); }
+@after { $tree.valueType = ts.returnType;}
+    : x=add
+      { ts.returnType = $x.tree.valueType; }                          
       (
         ( '<' | '>' | '=' | '==' | '<=' | '>=' )^ y=add
-                                                      { ts.add($y.tree); }
+        { ts.add($x.tree); ts.add($y.tree); }
       )*
     ;
 
 boolean_
 @init  { TypeSet ts = new TypeSet(); }
-@after { $tree.valueType = Type.resolve(ts, $tree);}
-    : x=equality                                      { ts.add($x.tree); }
+@after { $tree.valueType = ts.returnType;}
+    : x=equality
+      { ts.returnType = $x.tree.valueType; }
       (
-        ('and'|'or')^ y=equality                      { ts.add($y.tree); }
+        ('and'|'or')^ y=equality
+        { ts.add($x.tree); ts.add($y.tree); }
       )*
     ;
 
 expression
 @init  { TypeSet ts = new TypeSet(); }
-@after { $tree.valueType = Type.resolve(ts, $tree);}
-    : ('not'^)* b=boolean_                            { ts.add($b.tree); }
+@after { $tree.valueType = ts.returnType;}
+    : ('not'^)* b=boolean_
+      { ts.add($b.tree); }                            
     ;
 
 number
 @init  { TypeSet ts = new TypeSet(); }
-@after { $tree.valueType = Type.resolve(ts, $tree);}
-    : i=int_                                          { ts.add($i.tree); }
-    | f=float_                                        { ts.add($f.tree); }
+@after { $tree.valueType = ts.returnType;}
+    : i=int_   { ts.add($i.tree); }
+    | f=float_ { ts.add($f.tree); }
     ;
 
 float_
 @after {$tree.valueType = Type.FLOAT;}
-    : FLOAT 
+    : FLOAT <FloatNode>
     ;
 
 int_
 @after {$tree.valueType = Type.INT;}
-    : INTEGER
+    : INTEGER <IntegerNode>
     ;
 
 /******************************
