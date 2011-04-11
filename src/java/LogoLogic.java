@@ -25,8 +25,8 @@ public class LogoLogic {
 		log.info ("Values: " + x + ", " + y);
 		
 		switch(t.getType()) {
-			case LogoTurtleParser.AND:		return x && y;
-			case LogoTurtleParser.OR:		return x || y;
+			case LogoJVM1Parser.AND:		return x && y;
+			case LogoJVM1Parser.OR:		return x || y;
 		}
 		throw new RuntimeException("Cannot perform boolean operation " + t);
 	}
@@ -35,7 +35,7 @@ public class LogoLogic {
 		log.info ("Value: " + x);
 
 		switch (t.getType()) {
-		case LogoTurtleParser.NOT:			return !x;
+		case LogoJVM1Parser.NOT:			return !x;
 		}
 		throw new RuntimeException("Cannot perform boolean operation " + t);
 	}

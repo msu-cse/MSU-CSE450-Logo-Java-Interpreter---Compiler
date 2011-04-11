@@ -1,5 +1,5 @@
 /* Authors: Zach Riggle (zach@riggle.me), Brandon Overall (overallb@msu.edu), Kole Reece (reecekol@msu.edu) */
-grammar LogoTurtle;
+grammar LogoJVM1;
 options {
   output=AST;
   ASTLabelType=ScopedTree; // type of $stat.tree ref etc...
@@ -64,6 +64,11 @@ tokens {
   ENDFILL='endfill';
 }
 
+@members {
+  int numOps = 0;
+  
+}
+
 program 
     : statements
     ;
@@ -87,14 +92,14 @@ statements
     ;
 
 
-val   
+val returns [String name]
 @after  { $tree.valueType = null; }
-    : ':'^ ID<ValNode>
+    : ':'^ ID<ValNode> // {$name=$ID.text}
     ;
 
-ref
+ref returns [String name]
 @after { $tree.valueType = Type.STRING; }
-    : '"'^ ID<StringNode>
+    : '"'^ ID<StringNode> // {$name=$ID.text}
     ;
 
 /******************************
@@ -136,8 +141,8 @@ make
     ;
 
 print
-    : 'print'^ expression             // Single print
-    | '('! 'print'^ expression+ ')'!  // Parenthesized multi-print
+    : 'print' expression            -> ^(PRINT expression)  // Single print
+    | '(' 'print' expression+ ')' -> ^(PRINT expression+) // Parenthesized multi-print
     ;
 
 function_

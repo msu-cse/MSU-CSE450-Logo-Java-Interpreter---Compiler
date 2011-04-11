@@ -20,8 +20,10 @@ public class LogoMath {
 		log.info("Performing operation " + a.toStringTree());
 		log.info("Types: " + x.getClass() + ", " + y.getClass());
 		
-		if(x instanceof Symbol)
+		if(x instanceof Symbol) {
+			// XXX: When is this hit, does it effect translation?
 			x = ((Symbol) x).getValue();
+		}
 		
 		if(y instanceof Symbol)
 			y= ((Symbol) y).getValue();
@@ -32,7 +34,9 @@ public class LogoMath {
 		else if(x instanceof Integer || y instanceof Integer)
 			retVal = intOp(a, (Number)x, (Number) y);
 		
-		else if(x instanceof String && y instanceof String && a.getType() == LogoTurtleParser.PLUS)
+		else if(x instanceof String 
+				&& y instanceof String 
+				&& a.getType() == LogoJVM1Parser.PLUS)
 			return (String) x + (String) y;
 		
 		log.info(a.toString() + " returned " + retVal);
@@ -47,15 +51,15 @@ public class LogoMath {
 		log.info ("Values: " + x + ", " + y);
 		
 		switch(t.getType()) {
-			case LogoTurtleParser.PLUS:		return x+y;
-			case LogoTurtleParser.MINUS:	return x-y;
-			case LogoTurtleParser.DIV:		return x/y;
-			case LogoTurtleParser.MULT:		return x*y;
-			case LogoTurtleParser.MODULO:	return x%y;
-			case LogoTurtleParser.LT:		return x<y;
-			case LogoTurtleParser.LTE:		return x<=y;
-			case LogoTurtleParser.GT:		return x>y;
-			case LogoTurtleParser.GTE:		return x>=y;
+			case LogoJVM1Parser.PLUS:		return x+y;
+			case LogoJVM1Parser.MINUS:		return x-y;
+			case LogoJVM1Parser.DIV:		return x/y;
+			case LogoJVM1Parser.MULT:		return x*y;
+			case LogoJVM1Parser.MODULO:		return x%y;
+			case LogoJVM1Parser.LT:			return x<y;
+			case LogoJVM1Parser.LTE:		return x<=y;
+			case LogoJVM1Parser.GT:			return x>y;
+			case LogoJVM1Parser.GTE:		return x>=y;
 		}
 		
 		throw new RuntimeException("Cannot perform math operation " + t);
@@ -68,15 +72,15 @@ public class LogoMath {
 		log.info ("Values: " + x + ", " + y);
 		
 		switch(t.getType()) {
-			case LogoTurtleParser.PLUS:		return x+y;
-			case LogoTurtleParser.MINUS:	return x-y;
-			case LogoTurtleParser.DIV:		return x/y;
-			case LogoTurtleParser.MULT:		return x*y;
-			case LogoTurtleParser.MODULO:	return x%y;
-			case LogoTurtleParser.LT:		return x<y;
-			case LogoTurtleParser.LTE:		return x<=y;
-			case LogoTurtleParser.GT:		return x>y;
-			case LogoTurtleParser.GTE:		return x>=y;
+			case LogoJVM1Parser.PLUS:		return x+y;
+			case LogoJVM1Parser.MINUS:		return x-y;
+			case LogoJVM1Parser.DIV:		return x/y;
+			case LogoJVM1Parser.MULT:		return x*y;
+			case LogoJVM1Parser.MODULO:		return x%y;
+			case LogoJVM1Parser.LT:			return x<y;
+			case LogoJVM1Parser.LTE:		return x<=y;
+			case LogoJVM1Parser.GT:			return x>y;
+			case LogoJVM1Parser.GTE:		return x>=y;
 		}		
 		
 		throw new RuntimeException("Cannot perform math operation " + t);

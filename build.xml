@@ -25,10 +25,16 @@
 	
 
 	<target name="build_grammar_src" depends="prepare">
-		<java jar="${antlr.lib}" fork="true" failonerror="true" timeout="10000">
+		<java jar="${antlr.lib}" 
+			fork="true" 
+			failonerror="true" 
+			timeout="10000"
+			dir="${src.antlr}" >
+			
 			<arg value="-o" />
 			<arg path="${src.msu}" />
 			<arg file="${grammar.src}" />
+            <arg file="${grammar.src.tree}" />
 		</java>
 	</target>
 
@@ -49,6 +55,7 @@
 			</manifest>
 			<zipfileset excludes="META-INF/*.SF" src="${antlr.lib}" />
             <zipfileset excludes="META-INF/*.SF" src="${turtle.lib}" />
+            <zipfileset excludes="META-INF/*.SF" src="${jasmin.lib}" />
 		</jar>
 	</target>
 

@@ -1,16 +1,7 @@
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Stack;
 import java.util.logging.Logger;
 
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
-
-import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.runtime.TokenRewriteStream;
-import org.antlr.runtime.tree.CommonTree;
-import org.antlr.runtime.tree.Tree;
-
-import msu.cse.turtlegraphics.*;
+import msu.cse.turtlegraphics.Turtle;
+import msu.cse.turtlegraphics.TurtleDisplayFrame;
 
 public class Interpreter {
 
@@ -31,47 +22,15 @@ public class Interpreter {
 	Turtle turtle = new Turtle();
 
 	public Interpreter() {
+		instance = this;
 		frame.setVisible(true);
 		turtle.setCurrentTurtleDisplayCanvas(frame.getCurrentCanvas());
 	}
 
-	/**
-	 * Instantiate the interpreter based on an InputStream.
-	 * 
-	 * @param in
-	 * @throws Exception
-	 */
-	public Interpreter(ANTLRStringStream in) throws Exception {
-		this();
-		instance = this;
-		
-		// -- Parse the input`
-		LogoTurtleLexer lexer = new LogoTurtleLexer(in);
-		TokenRewriteStream tokens = new TokenRewriteStream(lexer);
-		LogoTurtleParser parser = new LogoTurtleParser(tokens);
-		parser.setTreeAdaptor(new LogoASTAdaptor());
-
-		// -- 'program' is the top-level rule
-		LogoTurtleParser.program_return r = parser.program();
-
-		// -- Check for errors
-		if (parser.getNumberOfSyntaxErrors() != 0)
-			throw new Exception("There were "
-					+ parser.getNumberOfSyntaxErrors() + " syntax errors.");
-
-		// -- Create the global scope
-		ScopedTree t = (ScopedTree) r.getTree();
-		t.memorySpace = new HashMap<String,Symbol>();
-		
-		// -- Execute
-		log.info("Full AST: " + t.toStringTree());
-		exec(t);
-	}
 
 	public Interpreter(ScopedTree t) {
-		instance = this;
-		
-		exec(t);
+		this();
+		exec(t);		
 	}
 
 	Object block(ScopedTree t) {
@@ -151,89 +110,89 @@ public class Interpreter {
 		
 		switch (t.getType()) {
 		case 0: // Nil, root of the tree, fall through to 'block'
-		case LogoTurtleParser.BLOCK:
+		case LogoJVM1Parser.BLOCK:
 			return block(t);
 
-		case LogoTurtleParser.AND:
+		case LogoJVM1Parser.AND:
 			return LogoLogic.op(t); // &&
-		case LogoTurtleParser.BACKWARD:
-		case LogoTurtleParser.BACKWARD2:
+		case LogoJVM1Parser.BACKWARD:
+		case LogoJVM1Parser.BACKWARD2:
 			return backward(t);
-		case LogoTurtleParser.BEGINFILL:
+		case LogoJVM1Parser.BEGINFILL:
 			return beginFill(t);
-		case LogoTurtleParser.BYNAME:
+		case LogoJVM1Parser.BYNAME:
 			return name(t);
-		case LogoTurtleParser.BYVAL:
+		case LogoJVM1Parser.BYVAL:
 			return val(t);
-		case LogoTurtleParser.CIRCLE:
+		case LogoJVM1Parser.CIRCLE:
 			return circle(t);
-		case LogoTurtleParser.COLOR:
+		case LogoJVM1Parser.COLOR:
 			return setPenColor(t);
-		case LogoTurtleParser.DIV:
+		case LogoJVM1Parser.DIV:
 			return LogoMath.op(t); // /
-		case LogoTurtleParser.END:
+		case LogoJVM1Parser.END:
 			return end(t);
-		case LogoTurtleParser.FLOAT:
+		case LogoJVM1Parser.FLOAT:
 			return Float.parseFloat(t.getText());
-		case LogoTurtleParser.ENDFILL:
+		case LogoJVM1Parser.ENDFILL:
 			return endFill(t);
-		case LogoTurtleParser.EQ:
+		case LogoJVM1Parser.EQ:
 			return equality(t); // ==
-		case LogoTurtleParser.FORWARD:
-		case LogoTurtleParser.FORWARD2:
+		case LogoJVM1Parser.FORWARD:
+		case LogoJVM1Parser.FORWARD2:
 			return forward(t);
-		case LogoTurtleParser.GT:
+		case LogoJVM1Parser.GT:
 			return LogoMath.op(t); // >
-		case LogoTurtleParser.GTE:
+		case LogoJVM1Parser.GTE:
 			return LogoMath.op(t); // >=
-		case LogoTurtleParser.ID:
+		case LogoJVM1Parser.ID:
 			return id(t);
-		case LogoTurtleParser.IF:
+		case LogoJVM1Parser.IF:
 			return if_(t);
-		case LogoTurtleParser.IFELSE:
+		case LogoJVM1Parser.IFELSE:
 			return ifelse(t);
-		case LogoTurtleParser.LEFT:
-		case LogoTurtleParser.LEFT2:
+		case LogoJVM1Parser.LEFT:
+		case LogoJVM1Parser.LEFT2:
 			return left(t);
-		case LogoTurtleParser.LT:
+		case LogoJVM1Parser.LT:
 			return LogoMath.op(t); // <
-		case LogoTurtleParser.LTE:
+		case LogoJVM1Parser.LTE:
 			return LogoMath.op(t); // <=
-		case LogoTurtleParser.MAKE:
+		case LogoJVM1Parser.MAKE:
 			return make(t);
-		case LogoTurtleParser.MINUS:
+		case LogoJVM1Parser.MINUS:
 			return LogoMath.op(t); // -
-		case LogoTurtleParser.MODULO:
+		case LogoJVM1Parser.MODULO:
 			return LogoMath.op(t); // %
-		case LogoTurtleParser.MULT:
+		case LogoJVM1Parser.MULT:
 			return LogoMath.op(t); // *
-		case LogoTurtleParser.NOT:
+		case LogoJVM1Parser.NOT:
 			return LogoLogic.op(t); // !
-		case LogoTurtleParser.INTEGER:
+		case LogoJVM1Parser.INTEGER:
 			return Integer.parseInt(t.getText());
-		case LogoTurtleParser.OR:
+		case LogoJVM1Parser.OR:
 			return LogoLogic.op(t); // ||
-		case LogoTurtleParser.PENDOWN:
+		case LogoJVM1Parser.PENDOWN:
 			return penDown(t);
-		case LogoTurtleParser.PENUP:
+		case LogoJVM1Parser.PENUP:
 			return penUp(t);
-		case LogoTurtleParser.PLUS:
+		case LogoJVM1Parser.PLUS:
 			return LogoMath.op(t); // +
-		case LogoTurtleParser.PRINT:
+		case LogoJVM1Parser.PRINT:
 			return print(t);
-		case LogoTurtleParser.RETURN:
+		case LogoJVM1Parser.RETURN:
 			return return_(t);
-		case LogoTurtleParser.TO:
+		case LogoJVM1Parser.TO:
 			return to(t);
-		case LogoTurtleParser.REPEAT:
+		case LogoJVM1Parser.REPEAT:
 			return repeat(t);
-		case LogoTurtleParser.RIGHT:
-		case LogoTurtleParser.RIGHT2:
+		case LogoJVM1Parser.RIGHT:
+		case LogoJVM1Parser.RIGHT2:
 			return right(t);
-		case LogoTurtleParser.SETHEADING:
-		case LogoTurtleParser.SETHEADING2:
+		case LogoJVM1Parser.SETHEADING:
+		case LogoJVM1Parser.SETHEADING2:
 			return setHeading(t);
-		case LogoTurtleParser.WHILE:
+		case LogoJVM1Parser.WHILE:
 			return while_(t);
 		default:
 			unhandledTypeError(t);
@@ -415,7 +374,7 @@ public class Interpreter {
 
 	void unhandledTypeError(ScopedTree t) {
 		log.severe("Encountered unhandled type " + t.getType() + " ("
-				+ LogoTurtleParser.tokenNames[t.getType()] + ")" + " at \""
+				+ LogoJVM1Parser.tokenNames[t.getType()] + ")" + " at \""
 				+ t.getText() + "\"" + " on line " + t.getLine() + ":"
 				+ t.getCharPositionInLine());
 		System.exit(1);

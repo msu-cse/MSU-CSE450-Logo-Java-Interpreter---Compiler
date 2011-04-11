@@ -138,17 +138,17 @@ public class Type {
 		// (Note: Don't misinterpret that as :x <= :z)
 		if(ts.contains(STRING)) {
 			switch(root.getType()) {
-				case LogoTurtleParser.AND:
-				case LogoTurtleParser.OR:
-				case LogoTurtleParser.NOT:
-				case LogoTurtleParser.GT:
-				case LogoTurtleParser.GTE:
-				case LogoTurtleParser.LT:
-				case LogoTurtleParser.LTE:
-				case LogoTurtleParser.MINUS:
-				case LogoTurtleParser.MULT:
-				case LogoTurtleParser.DIV:
-				case LogoTurtleParser.MODULO:
+				case LogoJVM1Parser.AND:
+				case LogoJVM1Parser.OR:
+				case LogoJVM1Parser.NOT:
+				case LogoJVM1Parser.GT:
+				case LogoJVM1Parser.GTE:
+				case LogoJVM1Parser.LT:
+				case LogoJVM1Parser.LTE:
+				case LogoJVM1Parser.MINUS:
+				case LogoJVM1Parser.MULT:
+				case LogoJVM1Parser.DIV:
+				case LogoJVM1Parser.MODULO:
 					throw new LogoException(root, "Illegal operation attempted on String: " + root.getTypeText());
 			}
 			
@@ -161,15 +161,15 @@ public class Type {
 		// e.g. (1 <= 2) / 7
 		if(ts.contains(BOOLEAN)) {
 			switch(root.getType()) {
-			case LogoTurtleParser.GT:
-			case LogoTurtleParser.GTE:
-			case LogoTurtleParser.LT:
-			case LogoTurtleParser.LTE:
-			case LogoTurtleParser.PLUS:
-			case LogoTurtleParser.MINUS:
-			case LogoTurtleParser.MULT:
-			case LogoTurtleParser.DIV:
-			case LogoTurtleParser.MODULO:
+			case LogoJVM1Parser.GT:
+			case LogoJVM1Parser.GTE:
+			case LogoJVM1Parser.LT:
+			case LogoJVM1Parser.LTE:
+			case LogoJVM1Parser.PLUS:
+			case LogoJVM1Parser.MINUS:
+			case LogoJVM1Parser.MULT:
+			case LogoJVM1Parser.DIV:
+			case LogoJVM1Parser.MODULO:
 				throw new LogoException(root, "Illegal operation attempted on Boolean: " + root.getTypeText());
 			}
 		}
@@ -183,14 +183,14 @@ public class Type {
 		// So we know it's a *valid* operation, we just need to know the return
 		// type.
 		switch (root.getType()) {
-		case LogoTurtleParser.AND:
-		case LogoTurtleParser.OR:
-		case LogoTurtleParser.NOT:
-		case LogoTurtleParser.GT:
-		case LogoTurtleParser.GTE:
-		case LogoTurtleParser.LT:
-		case LogoTurtleParser.LTE:
-		case LogoTurtleParser.EQ:
+		case LogoJVM1Parser.AND:
+		case LogoJVM1Parser.OR:
+		case LogoJVM1Parser.NOT:
+		case LogoJVM1Parser.GT:
+		case LogoJVM1Parser.GTE:
+		case LogoJVM1Parser.LT:
+		case LogoJVM1Parser.LTE:
+		case LogoJVM1Parser.EQ:
 			return BOOLEAN;
 		}
 			
@@ -214,5 +214,22 @@ public class Type {
 			return INT;
 		
 		throw new LogoException(root, "Could not determine operation result type");
+	}
+	
+	/**
+	 * Returns the Java descriptor that represents an instance of this type.
+	 * @return
+	 */
+	String getDescriptor() {
+		if(type == Integer.class)
+			return "Ljava/lang/Integer";
+		if(type == Float.class)
+			return "Ljava/lang/Float";
+		if(type == String.class)
+			return "Ljava/lang/String";
+		if(type == Boolean.class)
+			return "Ljava/lang/Boolean";
+		
+		throw new RuntimeException("Attempted to get class descriptor for unhandled type" + this);
 	}
 }

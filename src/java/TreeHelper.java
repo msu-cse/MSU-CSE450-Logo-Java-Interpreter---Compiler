@@ -19,7 +19,7 @@ abstract public class TreeHelper extends CommonTree {
 	}
 
 	public String getTypeText() {
-		return LogoTurtleParser.tokenNames[getType()];
+		return LogoJVM1Parser.tokenNames[getType()];
 	}
 	
 	public String fileLocation() {
