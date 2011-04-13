@@ -15,7 +15,8 @@ public class Function extends Symbol {
 	}
 
 	public Function(String name, ScopedTree declarationNode) {
-		super(name, null);
+		// XXX: Fix this, too much indirection.
+		super(name, declarationNode);
 	}
 
 	public Function(ScopedTree t) {

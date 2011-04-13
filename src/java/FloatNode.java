@@ -3,10 +3,12 @@ import org.antlr.runtime.Token;
 public class FloatNode extends ScopedTree {
 	public FloatNode() {
 		super();
+		this.valueType = Type.FLOAT;
 	}
 
 	public FloatNode(Token payload) {
 		super(payload);
+		this.valueType = Type.FLOAT;
 	}
 
 	Float getValue() {
@@ -14,6 +16,6 @@ public class FloatNode extends ScopedTree {
 	}
 
 	public String toString() {
-		return "float " + this.getText();
+		return this.getText()+"f";
 	}
 }

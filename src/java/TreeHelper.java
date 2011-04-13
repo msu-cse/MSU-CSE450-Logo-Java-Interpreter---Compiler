@@ -1,3 +1,6 @@
+import java.util.HashSet;
+import java.util.Set;
+
 import org.antlr.runtime.Token;
 import org.antlr.runtime.tree.CommonTree;
 
@@ -10,6 +13,8 @@ import org.antlr.runtime.tree.CommonTree;
  *
  */
 abstract public class TreeHelper extends CommonTree {
+	
+	
 	public TreeHelper() {
 		super();
 	}
@@ -19,7 +24,9 @@ abstract public class TreeHelper extends CommonTree {
 	}
 
 	public String getTypeText() {
-		return LogoJVM1Parser.tokenNames[getType()];
+		if(getType() >= 0)
+			return LogoJVM1Parser.tokenNames[getType()];
+		return "<unknown type: " + getType() + ">";
 	}
 	
 	public String fileLocation() {
@@ -27,6 +34,11 @@ abstract public class TreeHelper extends CommonTree {
 	}
 	
 	public String info() {
-		return toStringTree() + " at " + fileLocation();
+		return "'" + toStringTree() + "' at " + fileLocation();
 	}
+	
+//	public String toString() {
+//		if(getToken().getType() < 0) return super.toString();
+//		return super.toString() + " (" + getTypeText() + ")";
+//	}
 }

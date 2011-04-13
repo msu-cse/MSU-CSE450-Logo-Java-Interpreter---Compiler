@@ -1,6 +1,8 @@
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
@@ -16,7 +18,7 @@ import org.antlr.runtime.tree.Tree;
 public class ScopedTree extends IterableTree<ScopedTree> {
 
 	/** Expression type as determined by compile-time AST rules */
-	Type valueType;
+	protected Type valueType;
 
 	static Logger log = Logger.getLogger("ScopedTree");
 
@@ -116,8 +118,44 @@ public class ScopedTree extends IterableTree<ScopedTree> {
 	@Override
 	public String toString() {
 		if (valueType != null)
-			return super.toString() + "[" + valueType + "]";
+			return super.toString() + valueType;
 		else
 			return super.toString();
+	}
+
+	public void setValueType(Type valueType) {
+		this.valueType = valueType;
+		log.info(this.toStringTree());
+	}
+
+	public Type getValueType() {
+		return valueType;
+	}
+	
+	// -- Keep track of operand types
+	TypeSet argTypes = new TypeSet();
+	public void add(List l) {
+		for(Object o : l) {
+			if(!(o instanceof ScopedTree)) 
+				throw new LogoException("Got a non-scopedtree object in the arg list!");
+			
+			add((ScopedTree)o);
+		}
+	}
+	public void add(ScopedTree e) throws LogoException {
+		
+		
+		if(e==null) {
+			throw new LogoException("Attempted to add null!");
+		}
+		
+		if(e.getValueType() == null)  {
+			throw new LogoException("Attmepted to add " + e + " with null type!");
+		}
+		
+		if( argTypes.add(e) ) {
+			log.info("Added " + e + " to " + this);
+		}
+		setValueType( argTypes.returnType );
 	}
 }

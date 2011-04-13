@@ -4,9 +4,11 @@ import org.antlr.runtime.Token;
 public class IntegerNode extends ScopedTree {
 	public IntegerNode() {
 		super();
+		this.valueType = Type.INT;
 	}
 	public IntegerNode(Token payload) {
 		super(payload);
+		this.valueType = Type.INT;
 	}
 	
 	Integer getValue() {
@@ -14,6 +16,6 @@ public class IntegerNode extends ScopedTree {
 	}
 
 	public String toString() {
-		return "int " + this.getText();
+		return this.getText()+"i";
 	}
 }

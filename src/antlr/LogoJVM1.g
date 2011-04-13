@@ -3,6 +3,7 @@ grammar LogoJVM1;
 options {
   output=AST;
   ASTLabelType=ScopedTree; // type of $stat.tree ref etc...
+  TokenLabelType=TypedToken;
 }
 
 tokens { 
@@ -64,9 +65,52 @@ tokens {
   ENDFILL='endfill';
 }
 
+@header {
+  import java.util.logging.Logger;
+}
+
 @members {
   int numOps = 0;
+  Logger log =  Logger.getLogger("LogoJVM1.g");
   
+  void i(ScopedTree tree) {
+    log.info(tree.toStringTree() + " returns " + tree.valueType);
+  }
+    
+//  boolean isDefined(String id) {
+//    return getSymbol(id) == null ? false : true;
+//  }
+//  
+//  boolean define(String id, Type type) {
+//    // Define it only if it doesn't already exist.
+//    // Since we're not dealing with scoping for Project 5, this is fine.
+//    if(!isDefined(id))
+//      $block::symbols.put(new Symbol(id,type));
+//  }
+//  
+//  Symbol getSymbol(String id) {
+//    int level = $block.size();
+//    for (int s=level-1; s>=0; s--) {
+//        if ( $block[s]::symbols.contains(id) ) {
+//            return $block[s]::symbols.get(id);
+//        }
+//    }
+//    return null;
+//  }
+  
+}
+
+@lexer::members {
+  public Token emit() {
+    TypedToken t =
+        new TypedToken(input, state.type, state.channel,
+                    state.tokenStartCharIndex, getCharIndex()-1);
+    t.setLine(state.tokenStartLine);
+    t.setText(state.text);
+    t.setCharPositionInLine(state.tokenStartCharPositionInLine);
+    emit(t);
+    return t;
+  }
 }
 
 program 
@@ -92,14 +136,12 @@ statements
     ;
 
 
-val returns [String name]
-@after  { $tree.valueType = null; }
-    : ':'^ ID<ValNode> // {$name=$ID.text}
+val
+    : ':'^ ID<ValNode>  
     ;
 
-ref returns [String name]
-@after { $tree.valueType = Type.STRING; }
-    : '"'^ ID<StringNode> // {$name=$ID.text}
+ref 
+    : '"'^ ID<StringNode>
     ;
 
 /******************************
@@ -130,6 +172,8 @@ repeat // 'repeat' is not a class-requried statement, but is nice to have
  *       STATEMENT BLOCKS
  ******************************/
 block
+scope { MemorySpace symbols; }
+@init { $block::symbols = new MemorySpace(); }
     : statements -> ^(BLOCK statements+)
     ;
 
@@ -167,93 +211,55 @@ function_call
  *       EXPRESSIONS
  ******************************/
 term
-    : (val
+    : val
     | ref
     | '('! expression ')'!
-    | number)^
+    | number
     ; 
     
 unary
-@after { $tree.valueType = x.tree.valueType;}
-    // : ('+'^|'-'^)* negation // Ignore this for now.
-    : x=term                                        
+    : term  
     ;
 
 mult
-@init  { TypeSet ts = new TypeSet(); }
-@after { $tree.valueType = ts.returnType;}
-    : x=unary
-      { ts.returnType = $x.tree.valueType; }
+    : unary
       (
-        ('*'|'/'|'%')^ y=unary
-         { ts.add($y.tree); }
+        (MULT^|DIV^) unary
       )* 
     ;
 
 modulo
-@init  { TypeSet ts = new TypeSet(); }
-@after { $tree.valueType = ts.returnType;}
-    : 'modulo'^ x=mult y=mult
-      { ts.add($x.tree); ts.add($y.tree); }
-    | z=mult
-      { ts.returnType = $z.tree.valueType; }
+    : MODULO^ mult mult
+    | mult
     ;
 
-add
-@init  { TypeSet ts = new TypeSet(); }
-@after { $tree.valueType = ts.returnType;}
-    : x=modulo                                        
-      { ts.returnType = $x.tree.valueType; } 
+add : modulo                            
       (
-        ('+'|'-')^ y=modulo
-        { ts.add($x.tree); ts.add($y.tree); }
+        (o=PLUS^|o=MINUS^) modulo
       )*
     ;
 
 equality
-@init  { TypeSet ts = new TypeSet(); }
-@after { $tree.valueType = ts.returnType;}
-    : x=add
-      { ts.returnType = $x.tree.valueType; }                          
+    : add      
       (
-        ( '<' | '>' | '=' | '==' | '<=' | '>=' )^ y=add
-        { ts.add($x.tree); ts.add($y.tree); }
+        ( LT^ | GT^ | LTE^ | GTE^ | EQ^ ) add
       )*
     ;
 
-boolean_
-@init  { TypeSet ts = new TypeSet(); }
-@after { $tree.valueType = ts.returnType;}
-    : x=equality
-      { ts.returnType = $x.tree.valueType; }
+boolean_ 
+    : equality
       (
-        ('and'|'or')^ y=equality
-        { ts.add($x.tree); ts.add($y.tree); }
+        (AND^|OR^) equality
       )*
     ;
 
 expression
-@init  { TypeSet ts = new TypeSet(); }
-@after { $tree.valueType = ts.returnType;}
-    : ('not'^)* b=boolean_
-      { ts.add($b.tree); }                            
+    : (NOT^)* boolean_
     ;
 
-number
-@init  { TypeSet ts = new TypeSet(); }
-@after { $tree.valueType = ts.returnType;}
-    : i=int_   { ts.add($i.tree); }
-    | f=float_ { ts.add($f.tree); }
-    ;
-
-float_
-@after {$tree.valueType = Type.FLOAT;}
-    : FLOAT <FloatNode>
-    ;
-
-int_
-@after {$tree.valueType = Type.INT;}
-    : INTEGER <IntegerNode>
+number 
+    :FLOAT
+    |INTEGER
     ;
 
 /******************************

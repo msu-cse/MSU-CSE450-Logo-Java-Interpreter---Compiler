@@ -16,7 +16,12 @@ import org.antlr.stringtemplate.StringTemplateGroup;
 public class Proj5 {
 
 	public static void main(String[] args) throws RecognitionException, IOException {
-		new Proj5(args);
+//		try {
+			new Proj5(args);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			System.exit(1);
+//		}
 	}
 	
 	LogoASTAdaptor adaptor = new LogoASTAdaptor();
@@ -56,7 +61,6 @@ public class Proj5 {
 		
 		// -- Output the whole tree
 		log.info(parseReturn.tree.toStringTree());
-		log.info("What the hell, man?");
 		
 		// -- Dotfile of the tree
 		if(LogoProperties.GENERATE_DOTFILE) {
@@ -77,6 +81,7 @@ public class Proj5 {
 			nodes = new CommonTreeNodeStream(adaptor, parseReturn.tree);
 			nodes.setTokenStream(tokens);
 			walker = new LogoTree(nodes);
+			walker.file = null;
 			walker.setTemplateLib(templates);
 			walkerReturn = walker.program();
 			walkerOutput = walkerReturn.st;

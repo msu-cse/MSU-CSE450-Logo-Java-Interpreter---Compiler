@@ -7,10 +7,14 @@ options {
 }
 @header {
   import java.util.logging.Logger;
+  import java.io.File;
 }
 
 @members {
   MemorySpace mem;
+  
+  File file;
+  
   Logger log = Logger.getLogger("LogoTree");
 
   ScopedTree getTree(Object o) {
@@ -18,75 +22,127 @@ options {
     throw new RuntimeException("Attempted to cast " + o + " to a ScopedTree");
   }
   Boolean isFloat(Object t) {
-    return getTree(t).valueType.equals( Type.FLOAT );
+    log.info(t.toString());
+    return getTree(t).getValueType().equals( Type.FLOAT );
   }
   Boolean isInt(ScopedTree t) {
-    return getTree(t).valueType.equals( Type.INT );
+    return getTree(t).getValueType().equals( Type.INT );
   }
   Boolean isString(ScopedTree t) {
-    return getTree(t).valueType.equals( Type.STRING );
+    return getTree(t).getValueType().equals( Type.STRING );
   }
   Boolean isBool(ScopedTree t) {
-    return getTree(t).valueType.equals( Type.BOOLEAN );
+    return getTree(t).getValueType().equals( Type.BOOLEAN );
   }
   String getType(Object t) {
-    return getTree(t).valueType.getDescriptor(); 
+    return getTree(t).getValueType().descriptor; 
   }
+  String getType(Type t) {
+    log.info(""+ t);
+    return t.getDescriptor();
+  }
+  
+  // Quick access to logging
+  void i(Object o) { log.info(o.toString()); }
 }
 
-program
-  : (lines+=line)+              -> jasminFile(filename={"asdf.txt"},
-                                              instructions={$lines},
-                                              stack={999},
-                                              locals={999})
+// -- Program
+program 
+@init {
+  MemorySpace.scopeStack = $block;
+}
+  : b=block              -> jasminFile(filename={file==null?"<stdin>":file.getName()},
+                                       block={$b.st},
+                                       stack={999},
+                                       locals={999})
   ;
+
+// -- Block scope
+block
+scope {
+  MemorySpace scope;
+}
+@init {
+  $block::scope = new MemorySpace();
+}
+  : (lines+=line)+ -> block(lines={$lines})        
+  ;
+
 
 // -- Keep track of line numbers so that we can debug in Java
 line
-  : statement                   -> line(line={((Tree)$statement.start).getLine()}, v={$statement.st})
+  : statement                   -> line(text={$statement.text},line={((Tree)$statement.start).getLine()}, v={$statement.st})
   ;
 
+// -- Each individual statement
 statement
-  : ^(MAKE BYNAME ID e=expr)        -> assign(varNum={$ID.text},
-//                                          v={$e.st},
-                                          descr={"Hello, world!"},
-                                          id={$ID.text},
-                                          line={$MAKE.line})
-//  | ^(p=PRINT (
-//                e=expr          -> print(v=e,class={getType($e.start)})
-//              )+)               -> println()
-  | ^(PRINT BYNAME ID) {log.info("print byname id");}             -> print(class={getType($BYNAME)})
+
+  : ^(MAKE v=var e=expr)        
+    {
+      Symbol sym    = $block::scope.create($v.name);
+      sym.valueType = $e.t;
+    }
+                                -> assign(varName={sym.name},
+                                          varNum={sym.id},
+                                          v={$e.st})
+  | ^(p=PRINT (
+                prints+=subprint  -> println(before={$prints})
+              )+)
+//  | ^(PRINT term)               -> print(v={$term.st}, class={$term.tree})
   ;
   
-expr
-  : term
-  | ^(o=PLUS l=expr r=expr)     ->  add(a={$l.st}, b={$r.st}, float={isFloat($o)})
-  | ^(o=MINUS l=expr r=expr)    ->  sub(a={$l.st}, b={$r.st}, float={isFloat($o)})
-  | ^(o=MULT l=expr r=expr)     -> mult(a={$l.st}, b={$r.st}, float={isFloat($o)})
-  | ^(o=DIV l=expr r=expr)      ->  div(a={$l.st}, b={$r.st}, float={isFloat($o)})        
+subprint returns [Type t]
+@after {
+  $t = $e.t;
+}
+  : e=expr                        -> print(v={$e.st},class={$e.t.primitive})
   ;
 
-term 
-  : v=FLOAT                     ->  ldc(value={$v})
-  | v=INTEGER                   ->  ldc(value={$v})
-  | ^(BYNAME ID)                ->  ldc(value={"HELLO"})
-//  | BYVAL ID                  ->  
+expr returns [Type t]
+  : m=term   {$t=$m.t;}           -> {$term.st}
+  | e=math   {$t=$e.t;}           -> mathDebug(d={$e.desc},v={$e.st})
+  ;
+
+/******************************
+ *       MATH
+ ******************************/
+math returns [Type t, String desc]
+@after {
+  $t    = Type.resolveMath($o.getToken(), $l.t,$r.t);  // Type, for passing upward
+  $desc = $o.toStringTree();            // Description
+  
+  // -- Get ahold of the left and right side.  We might want to change these,
+  // and we can't directly modify $x.st
+  StringTemplate lst = $l.st;
+  StringTemplate rst = $r.st;
+  
+  // -- Must we do any type conversions?
+  if( Type.coerceRight($l.t,$r.t) )   rst = %coerce(a={$r.st});
+  if( Type.coerceLeft($l.t,$r.t) )    lst = %coerce(a={$l.st});
+  
+  boolean f = $t.equals(Type.FLOAT);
+  switch(o.getType()) {
+    case PLUS:  $st = %add(l={lst},  r={rst}, float={f}); break;
+    case MINUS: $st = %sub(l={lst},  r={rst}, float={f}); break;
+    case MULT:  $st = %mult(l={lst}, r={rst}, float={f}); break;
+    case DIV:   $st = %div(l={lst},  r={rst}, float={f}); break;
+  }
+}
+  : ^(o=(PLUS|MINUS|MULT|DIV) l=expr r=expr)
+  ;
+
+term returns [Type t]
+  : v=FLOAT      {$t=Type.FLOAT;}           -> ldc(value={$v.text})
+  | v=INTEGER    {$t=Type.INT;}             -> ldc(value={$v.text})
+  | var          {$t=Type.STRING;}          -> ldc(value={$v.text})
+  | r=ref        {$t=$r.sym.getValueType();}-> {$ref.st}
   ; 
-   
-  //  | ^(MAKE ref expr) -> write(it={$r.tree})
-//
-//
-//expr
-//  : 
-//  ;
-//
-//ref returns [String name]
-//  : ^(BYNAME ID) { $name=$ID.text; }
-//  ;
-//
-//float
-//  : ^(FLOAT) 
-//  ; 
-//int
-//  : ^(INTEGER)
-//  ;
+
+ref returns [Symbol sym] 
+  : ^(BYVAL ID) 
+    { $sym = $block::scope.get($ID.text); }
+     -> var(varNum={$sym.id}, varName={$sym.name}, 
+            float={$sym.valueType == Type.FLOAT},
+            int  ={$sym.valueType == Type.INT})
+  ;
+var returns [String name, Type t] : ^(BYNAME ID) { $name = $ID.text; $t = Type.STRING; };

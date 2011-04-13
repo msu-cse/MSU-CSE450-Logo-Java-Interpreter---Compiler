@@ -4,37 +4,38 @@ import java.util.logging.Logger;
 
 import org.antlr.runtime.tree.Tree;
 
-
 public class TypeSet extends HashSet<Type> {
-	
+
 	Type returnType = null;
-	
+
 	static Logger log = Logger.getLogger("TypeSet");
 
-	
+	public TypeSet() {
+	}
+
 	public boolean add(ScopedTree e) throws LogoException {
-		log.info(e.toStringTree());
-		
-		if(e == null)
-			return false;
-				
-		if(e.valueType == null)  {
+
+		if (e == null) {
+			log.info("Attempted to add null!");
 			return false;
 		}
-						
-		boolean retVal = super.add(e.valueType);
-		
+
+		if (e.getValueType() == null) {
+			log.info("Attmepted to add " + e + " with null type!");
+			return false;
+		}
+
+		boolean retVal = super.add(e.getValueType());
+
 		// -- If this type is new, add() returns true.
 		// If it returns false, we didn't add any new types, and don't need
 		// to check for type-safety again.
-		if(retVal) {
+		if (retVal) {
 			// If this doesn't throw an exception, we're good.
-			log.info("Added '" + e.valueType + "' to "+e.info()+", now " + this);
 			returnType = Type.resolve(this, e);
 		}
-		
-		log.info(this + " returns " + returnType);
 
 		return retVal;
 	}
+
 }

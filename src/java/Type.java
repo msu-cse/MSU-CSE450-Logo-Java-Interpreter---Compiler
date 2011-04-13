@@ -1,23 +1,64 @@
-import org.antlr.runtime.tree.Tree;
+import java.util.logging.Logger;
 
-import sun.util.logging.resources.logging;
-
-import com.sun.corba.se.impl.io.TypeMismatchException;
+import org.antlr.runtime.Token;
 
 
 public class Type {
 	
-	static final Type INT = new Type(Integer.class);
-	static final Type FLOAT = new Type(Float.class);
-	static final Type STRING = new Type(String.class);
-	static final Type BOOLEAN = new Type(Boolean.class);
+	static final Type INT = new Type(Integer.class,"Ljava/lang/Integer","I");
+	static final Type FLOAT = new Type(Float.class,"Ljava/lang/Float","F");
+	static final Type STRING = new Type(String.class,"Ljava/lang/String",null);
+	static final Type BOOLEAN = new Type(Boolean.class,"Ljava/lang/Boolean","Z");
+	
+	/**
+	 * Returns the Java descriptor that represents an instance of this type.
+	 * @return
+	 */
+	String getDescriptor() {
+		if(type == Integer.class)
+			return "Ljava/lang/Integer";
+		if(type == Float.class)
+			return "Ljava/lang/Float";
+		if(type == String.class)
+			return "Ljava/lang/String";
+		if(type == Boolean.class)
+			return "Ljava/lang/Boolean";
+		
+		throw new RuntimeException("Attempted to get class descriptor for unhandled type" + this);
+	}
+
+	
+	static Logger log = Logger.getLogger("Type"); 
+
+	static public class LogoTypeMismatchException extends RuntimeException {
+		public LogoTypeMismatchException(Token op, Type unaryType) {
+			super("Attempted to perform " + op.getText()
+					+ " on incompatible operand of type [" + unaryType + "]"
+					+ location(op));
+		}
+
+		public LogoTypeMismatchException(Token op, Type leftType, Type rightType) {
+			super("Attempted to perform " + op.getText()
+					+ " on incompatible operands of types [" + leftType + ", "
+					+ rightType + "]" + location(op));
+		}
+		
+		private static String location(Token t) {
+			return "at " + t.getLine() +":"+ t.getCharPositionInLine();
+		}
+	}
 	
 	@SuppressWarnings("rawtypes")
 	Class type;
 	
+	String descriptor;
+	String primitive;
+	
 	@SuppressWarnings("rawtypes")
-	private Type(Class type) {
+	private Type(Class type,String descriptor, String primitive) {
 		this.type = type;
+		this.descriptor=descriptor;
+		this.primitive=primitive;
 	}
 	
 	/**
@@ -51,15 +92,64 @@ public class Type {
 	@Override
 	public String toString() {
 		if(this.equals(INT))
-			return "int";
+			return "i";
 		if(this.equals(FLOAT))
-			return "float";
+			return "f";
 		if(this.equals(STRING))
-			return "string";
+			return "s";
 		if(this.equals(BOOLEAN))
-			return "bool";
+			return "b";
 
 		return "<unknown type>";
+	}
+	
+	static Type resolve(Token unaryOp, Type unaryType) {
+		return unaryType;
+	}
+	
+	static Type resolveBool(Token op, Type l, Type r) {
+		if(!l.equals(r))
+			throw new LogoTypeMismatchException(op,l,r);
+		return l;
+	}
+	
+	static Type resolveMath(Type l, Type r) {
+		return resolveMath(null,l,r);
+	}
+	
+	static boolean coerce(Type l, Type r) {
+		if(coerceRight(l,r) || coerceLeft(l,r)) {
+			return true;
+		}
+		return false;
+	}
+	
+	static boolean coerceRight(Type l, Type r) {
+		if(l == FLOAT && r == INT)
+			return true;
+		return false;
+	}
+	
+	static boolean coerceLeft(Type l, Type r) {
+		if(l == INT && r == FLOAT)
+			return true;
+		return false;
+	}
+	
+	static Type resolveMath(Token op, Type l, Type r) {
+		log.info("Resolving " + op + ": " + l + ", " + r);
+		
+		if (l == STRING || l == BOOLEAN || r == STRING || r == BOOLEAN)
+			throw new LogoTypeMismatchException(op, l, r);
+
+		if (l == FLOAT || r == FLOAT)
+			return FLOAT;
+		
+		return INT;
+	}
+	
+	static boolean isFloat(Type l, Type r) {
+		return resolveMath(l, r).equals( FLOAT );
 	}
 	
 	/** 
@@ -111,6 +201,8 @@ public class Type {
 	 * @throws LogoException
 	 */
 	static Type resolve(TypeSet ts, ScopedTree root) throws LogoException {
+		
+		log.info("Resolving " + root.getTypeText() + " over " + ts.toString());
 		
 		// -- Ignore all nulls, which are unresolvable variables.
 		// Decisions involving variables will have to be made at runtime, once
@@ -216,20 +308,4 @@ public class Type {
 		throw new LogoException(root, "Could not determine operation result type");
 	}
 	
-	/**
-	 * Returns the Java descriptor that represents an instance of this type.
-	 * @return
-	 */
-	String getDescriptor() {
-		if(type == Integer.class)
-			return "Ljava/lang/Integer";
-		if(type == Float.class)
-			return "Ljava/lang/Float";
-		if(type == String.class)
-			return "Ljava/lang/String";
-		if(type == Boolean.class)
-			return "Ljava/lang/Boolean";
-		
-		throw new RuntimeException("Attempted to get class descriptor for unhandled type" + this);
-	}
 }
