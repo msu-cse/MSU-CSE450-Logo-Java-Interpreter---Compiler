@@ -12,38 +12,8 @@ options {
 
 @members {
   MemorySpace mem;
-  
   File file;
-  
-  Logger log = Logger.getLogger("LogoTree");
-
-  ScopedTree getTree(Object o) {
-    if(o instanceof ScopedTree) return (ScopedTree) o;
-    throw new RuntimeException("Attempted to cast " + o + " to a ScopedTree");
-  }
-  Boolean isFloat(Object t) {
-    log.info(t.toString());
-    return getTree(t).getValueType().equals( Type.FLOAT );
-  }
-  Boolean isInt(ScopedTree t) {
-    return getTree(t).getValueType().equals( Type.INT );
-  }
-  Boolean isString(ScopedTree t) {
-    return getTree(t).getValueType().equals( Type.STRING );
-  }
-  Boolean isBool(ScopedTree t) {
-    return getTree(t).getValueType().equals( Type.BOOLEAN );
-  }
-  String getType(Object t) {
-    return getTree(t).getValueType().descriptor; 
-  }
-  String getType(Type t) {
-    log.info(""+ t);
-    return t.getDescriptor();
-  }
-  
-  // Quick access to logging
-  void i(Object o) { log.info(o.toString()); }
+  Logger log = Logger.getLogger("LogoTree.g");
 }
 
 // -- Program

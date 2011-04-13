@@ -2,14 +2,14 @@ import java.util.logging.Logger;
 
 
 /**
- * LOGO Math operations.
+ * LOGO Math operations for the interpreter.
  * 
  * Refactored here from {@link Interpreter} for easy separation of functionality.
  * 
  * @author zach
  *
  */
-public class LogoMath {
+public class InterpreterMath {
 
 	static Logger log = Logger.getLogger("Math");
 	

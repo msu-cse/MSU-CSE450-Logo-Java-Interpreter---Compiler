@@ -1,15 +1,13 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 
-import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.DOTTreeGenerator;
 import org.antlr.runtime.tree.TreeAdaptor;
 import org.antlr.stringtemplate.StringTemplate;
 
 /**
- * Writes and opens dotfiles.
+ * Writes and opens dotfiles for graphviz
  * 
  * @author zach
  * 
@@ -18,8 +16,8 @@ public class DotfileUtil {
 
 	public static String writeDotfile(Object tree, TreeAdaptor adaptor) {
 		DOTTreeGenerator dtg = new DOTTreeGenerator();
-		
-		StringTemplate st = dtg.toDOT(tree,adaptor);
+
+		StringTemplate st = dtg.toDOT(tree, adaptor);
 
 		try {
 			File tempfile = File.createTempFile("antlr", ".dot");
@@ -36,8 +34,9 @@ public class DotfileUtil {
 	}
 
 	public static void openDotfile(String filename) {
-		if(filename == null) return;
-		
+		if (filename == null)
+			return;
+
 		try {
 			File tempPng = File.createTempFile("antlr", ".svg");
 			String tempPngPath = tempPng.getAbsolutePath();

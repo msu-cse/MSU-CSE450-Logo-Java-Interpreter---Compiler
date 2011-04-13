@@ -22,21 +22,21 @@ public class Function extends Symbol {
 	public Function(ScopedTree t) {
 		this(t.getChild(0).getText(), null);
 		value = this;
-		
+
 		log.info("Instantiating function from " + t.info());
-		
+
 		List<ScopedTree> children = t.getChildren();
 		log.info("Chidlren: " + children);
-		
+
 		// Remove the name.
 		children.remove(0);
-		
+
 		// Remove the block
 		block = (ScopedTree) children.remove(children.size() - 1);
 		log.info("Block: " + block);
-		
-		for(ScopedTree child : children) {
-			
+
+		for (ScopedTree child : children) {
+
 			log.info("Arg: " + child);
 			parameters.add(child.getChild(0).getText());
 			log.info("Args: " + parameters);
@@ -53,28 +53,27 @@ public class Function extends Symbol {
 					+ arguments.size() + ")+ does not match expected count ("
 					+ parameters.size() + ")";
 
-
-			Iterator<ScopedTree> argIter = arguments.iterator(); 
+			Iterator<ScopedTree> argIter = arguments.iterator();
 			Iterator<String> paramIter = parameters.iterator();
-				
-			while(paramIter.hasNext() && argIter.hasNext()) {
-//				caller.put(paramIter.next(), caller.get(argIter.get));
+
+			while (paramIter.hasNext() && argIter.hasNext()) {
+				// caller.put(paramIter.next(), caller.get(argIter.get));
 			}
-			
+
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(name);
 		sb.append('(');
-		
-		for(String param : parameters) {
+
+		for (String param : parameters) {
 			sb.append(param);
 			sb.append(" ");
 		}
-		
+
 		sb.append(')');
 		return sb.toString();
 	}

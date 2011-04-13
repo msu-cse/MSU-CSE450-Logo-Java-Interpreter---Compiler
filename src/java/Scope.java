@@ -5,8 +5,6 @@ import java.util.logging.Logger;
 
 import org.antlr.runtime.tree.Tree;
 
-
-
 /**
  * Implements a variable scope for a given block.
  * @author zach
@@ -29,6 +27,7 @@ public class Scope {
 	@Override
 	public String toString() {
 		if(node != null) return node.toStringTree();
-		else return "<global scope>";
+		else
+			return "<global scope>";
 	}
 }

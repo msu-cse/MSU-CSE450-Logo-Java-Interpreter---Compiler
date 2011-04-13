@@ -114,7 +114,7 @@ public class Interpreter {
 			return block(t);
 
 		case LogoJVM1Parser.AND:
-			return LogoLogic.op(t); // &&
+			return InterpreterLogic.op(t); // &&
 		case LogoJVM1Parser.BACKWARD:
 		case LogoJVM1Parser.BACKWARD2:
 			return backward(t);
@@ -129,7 +129,7 @@ public class Interpreter {
 		case LogoJVM1Parser.COLOR:
 			return setPenColor(t);
 		case LogoJVM1Parser.DIV:
-			return LogoMath.op(t); // /
+			return InterpreterMath.op(t); // /
 		case LogoJVM1Parser.END:
 			return end(t);
 		case LogoJVM1Parser.FLOAT:
@@ -142,9 +142,9 @@ public class Interpreter {
 		case LogoJVM1Parser.FORWARD2:
 			return forward(t);
 		case LogoJVM1Parser.GT:
-			return LogoMath.op(t); // >
+			return InterpreterMath.op(t); // >
 		case LogoJVM1Parser.GTE:
-			return LogoMath.op(t); // >=
+			return InterpreterMath.op(t); // >=
 		case LogoJVM1Parser.ID:
 			return id(t);
 		case LogoJVM1Parser.IF:
@@ -155,29 +155,29 @@ public class Interpreter {
 		case LogoJVM1Parser.LEFT2:
 			return left(t);
 		case LogoJVM1Parser.LT:
-			return LogoMath.op(t); // <
+			return InterpreterMath.op(t); // <
 		case LogoJVM1Parser.LTE:
-			return LogoMath.op(t); // <=
+			return InterpreterMath.op(t); // <=
 		case LogoJVM1Parser.MAKE:
 			return make(t);
 		case LogoJVM1Parser.MINUS:
-			return LogoMath.op(t); // -
+			return InterpreterMath.op(t); // -
 		case LogoJVM1Parser.MODULO:
-			return LogoMath.op(t); // %
+			return InterpreterMath.op(t); // %
 		case LogoJVM1Parser.MULT:
-			return LogoMath.op(t); // *
+			return InterpreterMath.op(t); // *
 		case LogoJVM1Parser.NOT:
-			return LogoLogic.op(t); // !
+			return InterpreterLogic.op(t); // !
 		case LogoJVM1Parser.INTEGER:
 			return Integer.parseInt(t.getText());
 		case LogoJVM1Parser.OR:
-			return LogoLogic.op(t); // ||
+			return InterpreterLogic.op(t); // ||
 		case LogoJVM1Parser.PENDOWN:
 			return penDown(t);
 		case LogoJVM1Parser.PENUP:
 			return penUp(t);
 		case LogoJVM1Parser.PLUS:
-			return LogoMath.op(t); // +
+			return InterpreterMath.op(t); // +
 		case LogoJVM1Parser.PRINT:
 			return print(t);
 		case LogoJVM1Parser.RETURN:
@@ -202,27 +202,6 @@ public class Interpreter {
 	}
 
 	Object id(ScopedTree t) {
-		if(t instanceof CallNode) {			
-			CallNode cn = (CallNode) t;
-			Symbol s = cn.get(t.getText(), cn);
-			log.info(s.getClass().getName());
-			if(s.getValue() instanceof Function) {
-				Function f = (Function) s.getValue();
-				
-				cn.calledFunction = f;
-					
-				try {
-					f.call(cn, cn.getChildren());
-				}
-				catch (ReturnException re) {
-					return cn.calledFunction.returnValue;
-				}	
-			} else {
-				throw new RuntimeException("Tried to call " + t.getText() + " which is not a function.");
-			}
-		}
-		
-		// -- Just a simple ID
 		return t.getText();
 	}
 

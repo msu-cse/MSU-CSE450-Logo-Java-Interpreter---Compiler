@@ -3,7 +3,6 @@ grammar LogoJVM1;
 options {
   output=AST;
   ASTLabelType=ScopedTree; // type of $stat.tree ref etc...
-  TokenLabelType=TypedToken;
 }
 
 tokens { 
@@ -72,46 +71,8 @@ tokens {
 @members {
   int numOps = 0;
   Logger log =  Logger.getLogger("LogoJVM1.g");
-  
-  void i(ScopedTree tree) {
-    log.info(tree.toStringTree() + " returns " + tree.valueType);
-  }
-    
-//  boolean isDefined(String id) {
-//    return getSymbol(id) == null ? false : true;
-//  }
-//  
-//  boolean define(String id, Type type) {
-//    // Define it only if it doesn't already exist.
-//    // Since we're not dealing with scoping for Project 5, this is fine.
-//    if(!isDefined(id))
-//      $block::symbols.put(new Symbol(id,type));
-//  }
-//  
-//  Symbol getSymbol(String id) {
-//    int level = $block.size();
-//    for (int s=level-1; s>=0; s--) {
-//        if ( $block[s]::symbols.contains(id) ) {
-//            return $block[s]::symbols.get(id);
-//        }
-//    }
-//    return null;
-//  }
-  
 }
 
-@lexer::members {
-  public Token emit() {
-    TypedToken t =
-        new TypedToken(input, state.type, state.channel,
-                    state.tokenStartCharIndex, getCharIndex()-1);
-    t.setLine(state.tokenStartLine);
-    t.setText(state.text);
-    t.setCharPositionInLine(state.tokenStartCharPositionInLine);
-    emit(t);
-    return t;
-  }
-}
 
 program 
     : statements
@@ -137,11 +98,11 @@ statements
 
 
 val
-    : ':'^ ID<ValNode>  
+    : ':'^ ID  
     ;
 
 ref 
-    : '"'^ ID<StringNode>
+    : '"'^ ID
     ;
 
 /******************************
@@ -204,7 +165,7 @@ arguments
     ;
 
 function_call
-    : ID<CallNode>^ arguments
+    : ID^ arguments
     ;
 
 /******************************
@@ -276,6 +237,7 @@ turtle: ( penup
           | color
           | beginfill
           | endfill );
+
 penup:      'penup'^;
 pendown:    'pendown'^;
 forward:    ('forward'|'fd')^       expression;
@@ -307,7 +269,6 @@ INTEGER
 
 FLOAT
       : NUMBER '.' NUMBER
-//      | '.' NUMBER
       ;
 
 NEWLINE 

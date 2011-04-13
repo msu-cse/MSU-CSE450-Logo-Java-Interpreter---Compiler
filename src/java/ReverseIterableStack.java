@@ -3,11 +3,13 @@ import java.util.Iterator;
 import java.util.Stack;
 
 /**
- * Same as a regular {@link Stack}, but iterator operations start and the
- * end (top) and work toward the beginning (bottom).
+ * Same as a regular {@link Stack}, but iterator operations start and the end
+ * (top) and work toward the beginning (bottom).
+ * 
  * @author zach
- *
- * @param <T> Stack type
+ * 
+ * @param <T>
+ *            Stack type
  */
 public class ReverseIterableStack<T> extends java.util.Stack<T> implements
 		Iterable<T> {
@@ -19,7 +21,8 @@ public class ReverseIterableStack<T> extends java.util.Stack<T> implements
 
 		public StackIterator(ReverseIterableStack<T> stack) {
 			this.stack = stack;
-			this.current = stack.size() > 0 ? stack.get( stack.size() - 1 ) : null;
+			this.current = stack.size() > 0 ? stack.get(stack.size() - 1)
+					: null;
 		}
 
 		private void checkSanity() {

@@ -1,13 +1,9 @@
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
 import org.antlr.runtime.Token;
-import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
 
 /**
@@ -23,9 +19,9 @@ public class ScopedTree extends IterableTree<ScopedTree> {
 	static Logger log = Logger.getLogger("ScopedTree");
 
 	protected Map<String, Symbol> memorySpace;
-	
+
 	// XXX: Unused.
-	protected static Map<String, Symbol> globalMemorySpace = new HashMap<String,Symbol>();
+	protected static Map<String, Symbol> globalMemorySpace = new HashMap<String, Symbol>();
 
 	public ScopedTree() {
 		super();
@@ -51,7 +47,7 @@ public class ScopedTree extends IterableTree<ScopedTree> {
 	}
 
 	public Symbol get(String symbol, Tree requestingNode) {
-		log.info("Searching " + " for " + symbol + " in "+ this.toStringTree() );
+		log.info("Searching " + " for " + symbol + " in " + this.toStringTree());
 
 		// -- Check the local scope
 		if (memorySpace != null && memorySpace.containsKey(symbol)) {
@@ -59,27 +55,28 @@ public class ScopedTree extends IterableTree<ScopedTree> {
 			log.info("Found " + s);
 			return s;
 		} else {
-//			log.info("... does not exist in node's memory space");
+			// log.info("... does not exist in node's memory space");
 		}
 
 		// -- Recursively check upper scopes
 		if (getParent() != null) {
-//			log.info("... searching parent");
+			// log.info("... searching parent");
 			return getParent().get(symbol, requestingNode);
 		}
 
 		// -- Check global scope
 		else if (globalMemorySpace.containsKey(symbol)) {
 			// No parent, we're at the top. Check global scope.
-//			log.info("... searching global scope");
+			// log.info("... searching global scope");
 			return globalMemorySpace.get(symbol);
 		}
 
-		throw new LogoException(requestingNode, "Symbol '" + symbol + "' is not defined");
+		throw new LogoException(requestingNode, "Symbol '" + symbol
+				+ "' is not defined");
 	}
 
 	public void createSymbol(String name) {
-		log.info("Creating variable '" +name+ "'");
+		log.info("Creating variable '" + name + "'");
 		put(name, null);
 	}
 
@@ -130,32 +127,5 @@ public class ScopedTree extends IterableTree<ScopedTree> {
 
 	public Type getValueType() {
 		return valueType;
-	}
-	
-	// -- Keep track of operand types
-	TypeSet argTypes = new TypeSet();
-	public void add(List l) {
-		for(Object o : l) {
-			if(!(o instanceof ScopedTree)) 
-				throw new LogoException("Got a non-scopedtree object in the arg list!");
-			
-			add((ScopedTree)o);
-		}
-	}
-	public void add(ScopedTree e) throws LogoException {
-		
-		
-		if(e==null) {
-			throw new LogoException("Attempted to add null!");
-		}
-		
-		if(e.getValueType() == null)  {
-			throw new LogoException("Attmepted to add " + e + " with null type!");
-		}
-		
-		if( argTypes.add(e) ) {
-			log.info("Added " + e + " to " + this);
-		}
-		setValueType( argTypes.returnType );
 	}
 }

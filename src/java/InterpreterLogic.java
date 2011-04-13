@@ -1,7 +1,10 @@
 import java.util.logging.Logger;
 
-
-public class LogoLogic {
+/**
+ * Interpreter boolean logic.
+ * @author zach
+ */
+public class InterpreterLogic {
 
 	static Logger log = Logger.getLogger("Boolean");
 	
