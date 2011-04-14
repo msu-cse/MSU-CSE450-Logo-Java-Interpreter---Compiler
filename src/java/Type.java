@@ -1,3 +1,5 @@
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.antlr.runtime.Token;
@@ -5,11 +7,23 @@ import org.antlr.runtime.Token;
 
 public class Type {
 	
-	static final Type INT = new Type(Integer.class,"Ljava/lang/Integer","I");
-	static final Type FLOAT = new Type(Float.class,"Ljava/lang/Float","F");
-	static final Type STRING = new Type(String.class,"Ljava/lang/String",null);
-	static final Type BOOLEAN = new Type(Boolean.class,"Ljava/lang/Boolean","Z");
-
+	static final Type INT = new Type(Integer.class,"Ljava/lang/Integer","I","i",0);
+	static final Type FLOAT = new Type(Float.class,		"Ljava/lang/Float" ,"F","f",1);
+	static final Type DOUBLE = new Type(Boolean.class,	"Ljava/lang/Double","D","d",2);
+	static final Type STRING = new Type(String.class,"Ljava/lang/String",null,"s");
+	static final Type BOOLEAN = new Type(Boolean.class,"Ljava/lang/Boolean","Z","z");
+    static final Type VOID = new Type(Void.class,"Ljava/lang/Void","V","v");
+    
+    static Set<Type> mathTypes = new HashSet<Type>() {{
+    	add(INT);
+    	add(INT);
+    	add(DOUBLE);
+    }};
+    static Set<Type> nonMathTypes = new HashSet<Type>() {{
+    	add(STRING);
+    	add(BOOLEAN);
+    	add(VOID);
+    }};
 	
 	static Logger log = Logger.getLogger("Type"); 
 
@@ -37,13 +51,32 @@ public class Type {
 	String descriptor;
 	String primitive;
 	
+	String shortName;
+	
+	/** Priority to determine how a type conversion should proceed */
+	Integer priority = -1;
+	
 	@SuppressWarnings("rawtypes")
-	private Type(Class type,String descriptor, String primitive) {
+	private Type(Class type,String descriptor, String primitive, String shortName) {
 		this.type = type;
 		this.descriptor=descriptor;
 		this.primitive=primitive;
+		this.shortName=shortName;
 	}
-	
+
+
+	@SuppressWarnings("rawtypes")
+	public Type(Class type, String descriptor, String primitive,
+			String shortName, Integer priority) {
+		super();
+		this.type = type;
+		this.descriptor = descriptor;
+		this.primitive = primitive;
+		this.shortName = shortName;
+		this.priority = priority;
+	}
+
+
 	/**
 	 * Given an object, determine its {@link Type}.
 	 * @param o
@@ -74,16 +107,7 @@ public class Type {
 	
 	@Override
 	public String toString() {
-		if(this.equals(INT))
-			return "i";
-		if(this.equals(FLOAT))
-			return "f";
-		if(this.equals(STRING))
-			return "s";
-		if(this.equals(BOOLEAN))
-			return "b";
-
-		return "<unknown type>";
+		return this.shortName;
 	}
 	
 	static Type resolve(Token unaryOp, Type unaryType) {
@@ -107,28 +131,40 @@ public class Type {
 		return false;
 	}
 	
+	/** @returns True if R must be convered to L.type */
 	static boolean coerceRight(Type l, Type r) {
-		if(l == FLOAT && r == INT)
+		if(l.priority > r.priority)
 			return true;
 		return false;
 	}
 	
 	static boolean coerceLeft(Type l, Type r) {
-		if(l == INT && r == FLOAT)
+		if(l.priority < r.priority)
 			return true;
+		return false;
+	}
+	
+	static boolean canDoMath(Type l, Type r) {
+		if (nonMathTypes.contains(l) || nonMathTypes.contains(r))
+			return false;
+		return true;
+	}
+	static boolean canCompare(Type l, Type r) {
+		if (l == r || canDoMath(l, r)) 
+			return true;
+		
 		return false;
 	}
 	
 	static Type resolveMath(Token op, Type l, Type r) {
 		log.info("Resolving " + op + ": " + l + ", " + r);
 		
-		if (l == STRING || l == BOOLEAN || r == STRING || r == BOOLEAN)
+		if(!canDoMath(l, r))
 			throw new LogoTypeMismatchException(op, l, r);
 
-		if (l == FLOAT || r == FLOAT)
-			return FLOAT;
-		
-		return INT;
+		if(l.priority >= r.priority) 
+			return l;
+		return r;
 	}
 	
 	static boolean isFloat(Type l, Type r) {

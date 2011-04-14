@@ -7,7 +7,9 @@ public class MemorySpace extends HashMap<String, Symbol> {
 
 	// XXX: This is a hack to start at 1. Really, we need to start at
 	// number-of-args. Given that main() has one arg, we start at one.
-	Integer nextIndex = 0;
+	// XXX: This is a hack to use a static.  Just doing this to get at the count
+	// from within the grammar easily for Project 5.
+	static Integer nextIndex = 1;
 
 	Symbol create(String key) {
 		Symbol s;

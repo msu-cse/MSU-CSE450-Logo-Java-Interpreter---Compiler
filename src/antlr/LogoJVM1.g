@@ -46,22 +46,23 @@ tokens {
   BYNAME='"';
   
 // -- Turtle
-  PENUP='penup';
-  PENDOWN='pendown';
-  FORWARD='forward';
-  FORWARD2='fd';
-  BACKWARD='back';
   BACKWARD2='bk';
-  LEFT='left';
-  LEFT2='lt';
-  RIGHT='right';
-  RIGHT2='rt';
-  SETHEADING='setheading';
-  SETHEADING2='seth';
+  BACKWARD='back';
+  BEGINFILL='beginfill';
   CIRCLE='circle';
   COLOR='setpencolor';
-  BEGINFILL='beginfill';
   ENDFILL='endfill';
+  FORWARD2='fd';
+  FORWARD='forward';
+  LEFT2='lt';
+  LEFT='left';
+  PENDOWN='pendown';
+  PENUP='penup';
+  RIGHT2='rt';
+  RIGHT='right';
+  SETHEADING2='seth';
+  SETHEADING='setheading';
+  SETPOS='setpos';
 }
 
 @header {
@@ -85,7 +86,7 @@ statement
         | while_
         | if_
         | ifelse_
-        | function_call 
+//        | function_call 
         | function_ 
         | repeat
         | turtle
@@ -164,9 +165,9 @@ arguments
     : '('! (val|ref)* ')'!
     ;
 
-function_call
-    : ID^ arguments
-    ;
+//function_call
+//    : ID^ arguments
+//    ;
 
 /******************************
  *       EXPRESSIONS
@@ -245,9 +246,9 @@ backward:   ('back'|'bk')^          expression;
 left:       ('left'|'lt')^          expression;
 right:      ('right'|'rt')^         expression;
 heading:    ('setheading'|'seth')^  expression;
+circle:     'circle'^               expression expression;
 setpos:     'setpos'^               expression expression;
-circle:     'circle'                expression;
-color:      'setpencolor'^          expression ',' expression ',' expression;
+color:      'setpencolor'^          expression ','! expression ','! expression;
 beginfill:  'beginfill';
 endfill:    'endfill';
 

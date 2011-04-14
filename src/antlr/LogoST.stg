@@ -6,6 +6,43 @@ jasminFile(filename, block, locals, stack) ::= <<
 .class public Main
 .super java/lang/Object
 
+.field public foo I
+;.field private static gen Lmsu/cse/turtlegraphics/Turtle;
+.field public static turtle  Lmsu/cse/turtlegraphics/Turtle;
+.field public static frame   Lmsu/cse/turtlegraphics/TurtleDisplayFrame;
+
+;// Static initializer
+;// Instantiate and initialize the turtle object and the display frame, as 
+;// well as show the display frame.
+.method static public \<clinit\>()V
+  .limit stack 2
+   
+  .line 1 ;// static Turtle turtle = new Turtle();
+    new msu/cse/turtlegraphics/Turtle
+    dup
+    invokenonvirtual msu/cse/turtlegraphics/Turtle/\<init\>()V
+    putstatic Main/turtle Lmsu/cse/turtlegraphics/Turtle;
+   
+  .line 2 ;// static TurtleDisplayFrame frame = new TurtleDisplayFrame();
+    new msu/cse/turtlegraphics/TurtleDisplayFrame
+    dup
+    invokenonvirtual msu/cse/turtlegraphics/TurtleDisplayFrame/\<init\>()V
+    putstatic Main/frame Lmsu/cse/turtlegraphics/TurtleDisplayFrame;
+   
+  .line 3 ;// frame.setVisible(true);
+    getstatic Main/frame Lmsu/cse/turtlegraphics/TurtleDisplayFrame;
+    ldc 1
+    invokevirtual msu/cse/turtlegraphics/TurtleDisplayFrame/setVisible(Z)V
+   
+  .line 4 ;// turtle.setCurrentTurtleDisplayCanvas(frame.getCurrentCanvas());
+    getstatic Main/turtle Lmsu/cse/turtlegraphics/Turtle;
+      getstatic Main/frame Lmsu/cse/turtlegraphics/TurtleDisplayFrame;
+      invokevirtual msu/cse/turtlegraphics/TurtleDisplayFrame/getCurrentCanvas()Lmsu/cse/turtlegraphics/TurtleDisplayCanvas;
+    invokevirtual msu/cse/turtlegraphics/Turtle/setCurrentTurtleDisplayCanvas(Lmsu/cse/turtlegraphics/TurtleDisplayCanvas;)V
+    
+   return
+.end method
+
 ; public Main() { super(); } // calls java.lang.Object()
 .method public ()V
    aload_0
@@ -15,8 +52,8 @@ jasminFile(filename, block, locals, stack) ::= <<
 
 ; main(): Expr.g will generate bytecode in this method
 .method public static main([Ljava/lang/String;)V
-   .limit stack <stack> ; how much stack space do we need?
-   .limit locals <locals> ; how many locals do we need?
+   .limit stack <stack>   ;// how much stack space do we need?
+   .limit locals <locals> ;// how many locals do we need?
 
    <block; separator="\n">
 
@@ -33,16 +70,15 @@ block(lines) ::= <<
 
 line(line,text,v) ::= <<
 
-
-.line <line> ; <text>
+.line <line> ;// <text>
     <v>
 >>
 
 // START:stat
-assign(varNum,v,varName) ::= <<
+assign(varNum,v,varName,type) ::= <<
 <v>
 
-istore <varNum> ; <varName>
+<type>store <varNum> ; // <varName>
 >>
 
 write(it) ::= <<
@@ -56,10 +92,12 @@ mathDebug(v, d) ::= <<
 >>
 // END:stat
 
-coerce(a) ::= <<
+coerce(a,from,to) ::= <<
 <a>
-i2f
+<from>2<to>
 >>
+
+
 
 /******************************
  *       ADD
@@ -70,11 +108,7 @@ add(l,r,float,cr,cl) ::= <<
 <r>
 <cr>
 
-<if (float)>
-fadd
-<else>
-iadd
-<endif>
+<type>add
 >>
 
 /******************************
@@ -86,11 +120,7 @@ sub(l,r,float,cr,cl) ::= <<
 <r>
 <cr>
 
-<if (float)>
-fsub
-<else>
-isub
-<endif>
+<type>sub
 >>
 
 /******************************
@@ -102,11 +132,7 @@ mult(l,r,float,cr,cl) ::= <<
 <r>
 <cr>
 
-<if (float)>
-fmul
-<else>
-imul
-<endif>
+<type>mul
 >>
 
 
@@ -119,11 +145,7 @@ div(l,r,float,cr,cl) ::= <<
 <r>
 <cr>
 
-<if (float)>
-fdiv
-<else>
-idiv
-<endif>
+<type>div
 >>
 
 /******************************
@@ -136,12 +158,12 @@ ldc <value>
 /******************************
  *       STORE VALUE
  ******************************/
-var(varName, varNum, float, int) ::= <<
+var(varName, varNum, float, int, type) ::= <<
 <if (float)>
-float <varNum> ; <varName>
+fload <varNum> ;// <varName>
 <endif>
 <if (int)>
-iload <varNum> ; <varName>
+iload <varNum> ;// <varName>
 <endif>
 >>
 
@@ -159,4 +181,13 @@ println(before) ::= <<
 <before; separator="\n">
 getstatic     java/lang/System/out Ljava/io/PrintStream;
 invokevirtual java/io/PrintStream/println()V
+>>
+
+/******************************
+ *       TURTLE
+ ******************************/
+turtle(args,signature,argtypes,returntype) ::= <<
+getstatic Main/turtle Lmsu/cse/turtlegraphics/Turtle;
+<args; separator="\n">
+invokevirtual <signature>(<argtypes>)<returntype>
 >>

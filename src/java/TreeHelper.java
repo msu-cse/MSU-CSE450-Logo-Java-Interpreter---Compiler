@@ -25,10 +25,10 @@ abstract public class TreeHelper extends CommonTree {
 	}
 
 	public String fileLocation() {
-		return getLine() + ":" + getCharPositionInLine();
+		return + getLine() + ":" + getCharPositionInLine();
 	}
 
 	public String info() {
-		return "'" + toStringTree() + "' at " + fileLocation();
+		return "'" + toStringTree() + "' at line " + fileLocation();
 	}
 }

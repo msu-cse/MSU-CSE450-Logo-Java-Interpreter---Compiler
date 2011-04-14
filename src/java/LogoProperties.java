@@ -21,11 +21,7 @@ public class LogoProperties extends Properties {
 	/**
 	 * Instance backing the static methods.
 	 */
-	static LogoProperties instance = new LogoProperties() {
-		{
-			defaults = defaultValues;
-		}
-	};
+	static LogoProperties instance = new LogoProperties();
 
 	/**
 	 * Properties to be set in the initialization code.
@@ -60,7 +56,7 @@ public class LogoProperties extends Properties {
 	 */
 	static {
 		File propsFile = new File(propertiesFile);
-
+		instance.defaults = defaultValues;
 		try {
 			FileInputStream fis = new FileInputStream(propsFile);
 			instance.load(fis);
