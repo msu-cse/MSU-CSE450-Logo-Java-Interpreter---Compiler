@@ -1,5 +1,7 @@
 # CSE450 Spring 2011 Project
 
+Download each project: [Downloads](https://github.com/zachriggle/MSU-CSE450-Logo-Java-Interpreter---Compiler/downloads)
+
 ## Usage
 
 -   Build everything: `ant` *(or build from within Eclipse with the Ant pane)*
